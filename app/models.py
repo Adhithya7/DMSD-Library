@@ -1,4 +1,4 @@
-from peewee import Model, CharField, DateTimeField, BooleanField, DatabaseProxy
+from peewee import *
 import datetime
 
 database_proxy = DatabaseProxy()
@@ -7,12 +7,21 @@ class Documents(Model):
     class Meta:
         database = database_proxy
 
-    pkey = CharField(primary_key=True)
-    updated_at = DateTimeField(default=datetime.datetime.now)
-    created_at = DateTimeField(default=datetime.datetime.now)
-    lastmodified = DateTimeField()
-    created_ts = DateTimeField(default=datetime.datetime.now)
+    docid = AutoField(primary_key=True)
+    title = CharField()
+    pdate = DateTimeField()
+    publisherid = CharField()
 
     def save(self, *args, **kwargs):
-        self.updated_at = datetime.datetime.now()
         return super(Documents, self).save(*args, **kwargs)
+
+class Publisher(Model):
+    class Meta:
+        database = database_proxy
+
+    publisherid = ForeignKeyField(Documents, field='publisherid' ,primary_key=True)
+    pubname = CharField()
+    address = CharField()
+
+    def save(self, *args, **kwargs):
+        return super(Publisher, self).save(*args, **kwargs)
