@@ -7,8 +7,9 @@ body {
 .navbar {
     background: #6ab446;
 }
+
 .nav_item {
-    font-size: 40px;
+    font-size: 25px;
 }
 
 .nav-link,
@@ -39,7 +40,8 @@ body {
     background-image: url('images/background-min.png');
     background-size: cover;
     background-position: center;
-    position: relative;
+    margin: 0;
+    padding: 0;
 }
 
 .overlay {
@@ -98,8 +100,6 @@ body {
 }
 
 .features img {
-    -webkit-box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
-    -moz-box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
     margin-bottom: 16px;
 }
@@ -118,4 +118,50 @@ body {
     color: rgb(255, 255, 255);
     font-size: 30px;
     font-weight: 900;
+}
+
+.page_title {
+    color: white;
+    margin: 30px;
+    text-align: center;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 20px;
+    border-style: hidden;
+    box-shadow: 0 0 0 1px #ccc;
+}
+
+td,
+th {
+    border: 1px solid #ccc;
+    text-align: left;
+    padding: 8px;
+    color: white;
+}
+
+.table-search {
+    color: white;
+    font-size: 25px;
+}
+
+.search-input {
+    border-radius: 5px;
+}
+.reserved_table,
+.borrowed_table {
+    margin-top: 50px;
+}
+
+.table_name {
+    color: white;
+    font-size: 25px;
+}
+.contact-details {
+    color: white;
+    text-align: center;
+    font-size: 25px;
 }
