@@ -19,7 +19,7 @@ queries = sorted(queries, key=lambda x:x["file"].lower())
 cursor.execute("select table_name from information_schema.tables where table_schema='public'")
 existing_tables = cursor.fetchall()
 existing_tables = [v[0] for v in existing_tables]
-
+print(queries)
 for order, q in enumerate(queries):
     sql = q["sql"]
     file = q["file"]
@@ -34,7 +34,12 @@ for order, q in enumerate(queries):
             print(f"Table {t} already exists, blocking query")
             continue
     try:
-        cursor.execute(sql)
+        if "copy" in sql:
+            elem = sql.split(" ")
+            with open(elem[3].replace("'","")) as f:
+                cursor.copy_expert(f'COPY {elem[1]} FROM STDIN WITH HEADER CSV', f)
+        else:
+            cursor.execute(sql)
         print("Ran successfully") 
         connection.commit()
     except Exception as e:

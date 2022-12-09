@@ -1,0 +1,101 @@
+DOCID,TITLE,PDATE,PUBLISHERID
+1,The Da Vinci Code,2004/3/1,1
+2,Harry Potter and the Philosopher's Stone,1997/6/26,2
+3,Harry Potter and the Chamber of Secrets,1999/4/1,2
+4,Angels and Demons,2003/7/1,1
+5,Harry Potter and the Order of the Phoenix,2003/6/21,2
+6,Harry Potter and the Half-blood Prince:Children's Edition,2005/7/16,2
+7,Harry Potter and the Deathly Hallows,2007/7/21,2
+8,Harry Potter and the Prisoner of Azkaban,2000/4/1,2
+9,Twilight,2007/3/22,3
+10,Harry Potter and the Goblet of Fire,2001/7/6,2
+11,Deception Point,2004/5/1,1
+12,New Moon,2007/9/6,3
+13,The Lovely Bones,2009/12/4,4
+14,Digital Fortress,2004/3/5,1
+15,The Curious Incident of the Dog in the Night-time,2004/4/1,5
+16,Eclipse,2008/7/3,3
+17,"Girl with the Dragon Tattoo,The:Millennium Trilogy",2008/7/24,6
+18,The Kite Runner,2004/6/7,2
+19,"Time Traveler's Wife,The",2004/5/29,5
+20,The World According to Clarkson,2005/5/26,7
+21,Atonement,2002/5/2,5
+22,The Lost Symbol,2009/9/15,1
+23,A Short History of Nearly Everything,2004/6/1,1
+24,Breaking Dawn,2008/8/4,3
+25,Harry Potter and the Goblet of Fire,2000/7/8,2
+26,Harry Potter and the Deathly Hallows,2007/7/21,2
+27,"Girl Who Played With Fire,The:Millennium Trilogy",2010/7/29,6
+28,A Child Called It,2001/1/4,8
+29,"No.1 Ladies' Detective Agency,The:No.1 Ladies' Detective Agency S.",2003/6/5,3
+30,You are What You Eat:The Plan That Will Change Your Life,2004/6/17,7
+31,Man and Boy,2000/3/6,9
+32,Birdsong,1994/7/18,5
+33,Labyrinth,2006/1/11,8
+34,The Island,2006/4/10,10
+35,Life of Pi,2003/5/17,11
+36,"Dr. Atkins' New Diet Revolution:The No-hunger, Luxurious Weight Loss P",2003/1/2,5
+37,"Tales of Beedle the Bard,The",2008/12/4,2
+38,Captain Corelli's Mandolin,1995/6/1,5
+39,Delia's How to Cook:(Bk.1),1998/10/12,5
+40,The Gruffalo,2009/3/6,4
+41,Genetic diversity fuels gene discovery for tobacco and alcohol use,2010/8/13,12
+42,Gigaelectronvolt emission from a compact binary merger,2010/10/18,12
+43,A kilonova following a long-duration gamma-ray burst at 350 Mpc,2012/1/24,12
+44,A signalling pathway for transcriptional regulation of sleep amount in mice,2012/8/7,12
+45,Curvature dependences of wave propagation in reactiondiffusion models,2013/7/25,12
+46,Solitons on the rarefaction wave background via the Darboux transformation,2014/1/15,13
+47,Quenching for a semi-linear wave equation for micro-electro-mechanical systems,2014/1/22,13
+48,Normal forms for saddle-node bifurcations: Takens coefficient and applications in climate models,2014/8/22,13
+49,Shape reconfiguration through origami folding sets an upper limit on drag,2015/2/27,14
+50,Light-induced swirling and locomotion,2015/3/11,14
+51,On the eigenstructure of rotations and poses: commonalities and peculiarities,2015/5/15,14
+52,Representing the stress and strain energy of elastic solids with initial stress and transverse texture anisotropy,2015/10/5,14
+53,A thermal emissions-based real-time monitoring system for in situ detection of fatigue cracks,2016/3/10,14
+54,A design-space minimum sampling strategy based on proper-orthogonal-decomposition projection,2017/3/20,14
+55,Bi-stable lateral buckled beam: quasi-static snap-through behaviour analysis,2017/7/21,14
+56,Helicoids and vortices,2019/3/5,15
+57,Solitons on the rarefaction wave background via the Darboux transformation,2019/5/14,15
+58,Shape reconfiguration through origami folding sets an upper limit on drag,2019/6/12,15
+59,Viscous froth model applied to the dynamic simulation of bubbles flowing in a channel: three-bubble case,2019/10/23,15
+60,A low-rank ensemble Kalman filter for elliptic observations,2020/4/20,15
+61,Mechanism for turbulence proliferation in subcritical flows,2020/6/12,15
+62,The Elbert range of magnetostrophic convection. I. Linear theory,2020/8/19,15
+63,Soft wetting with (a)symmetric Shuttleworth effect,2020/11/18,15
+64,Wave spectroscopy in a driven granular material,2020/12/16,15
+65,Waves in the Earths core. I. Mildly diffusive torsional oscillations,2021/5/13,15
+66,Unbiased estimation of the Hessian for partially observed diffusions,2011/9/7,16
+67,Sensitivity analysis of Wasserstein distributionally robust optimization problems,2012/12/21,16
+68,Bayesian mechanics for stationary processes,2013/1/18,16
+69,Wind field reconstruction with adaptive random Fourier features,2013/3/25,16
+70,A data-centric approach to generative modelling for 3D-printed steel,2013/11/11,16
+71,Preface: International Conference on Physics and Energy 2021 (ICPAE 2021),2014/2/24,17
+72,A virtual reality research of Gait analysis in the medicine fields,2014/6/6,17
+73,A review of the motivation theories in learning,2014/12/22,17
+74,Elucidating the power of human resource practices and policies on employee attrition,2015/2/13,17
+75,Employee expectation to ease employee attrition in hotel industry,2015/3/5,17
+76,Influence of surface roughness factor for manufacturing process parameters optimization of pure Titanium using wire cut electrical discharge machining,2015/6/19,17
+77,Soft computing technique for Bootstrap converter Fed SVM inverter based induction motor drive system,2016/1/6,17
+78,Investigation and implementation of a high efficient DC- AC converter for SPV applications,2016/5/26,17
+79,Experimental results on transformer based dual output bidirectional converter for electric vehicles,2016/7/29,17
+80,A solid waste management survey in Davao del Sur (school and household waste management survey),2017/4/11,17
+81,An application of traveling salesman problem using the improved genetic algorithm on android google maps,2017/8/28,17
+82,"Multistability, symmetry and geometric conservation in eightfold waterbomb origami",2017/9/15,18
+83,Fury: an experimental dynamo with anisotropic electrical conductivity,2017/12/13,18
+84,Atomistic mechanisms of phase nucleation and propagation in a model two-dimensional system,2018/9/17,18
+85,Cosection localization and the Quot scheme QuotSl(E),2019/3/28,18
+86,Evolution of spray and aerosol from respiratory releases: theoretical estimates for insight on viral transmission,2019/7/11,18
+87,The reflection of a blast wave by a very intense explosion,2020/12/15,18
+88,Electric field control of magnetism,2020/12/17,19
+89,Electrocharging face masks with corona discharge treatment,2021/1/19,19
+90,Environmental sustainability of biofuel,2021/1/21,19
+91,A model of carbon dioxide dissolution and mineral carbonation kinetics,2017/5/9,19
+92,A modelling framework to assess the likely effectiveness of facemasks in combination with lock-down in managing the COVID-19 pandemic,2018/11/22,19
+93,Advances in smart roads for future smart cities,2019/6/21,19
+94,The empirical mode decomposition and the Hilbert spectrum for nonlinear and non-stationary time series analysis,2020/2/19,20
+95,A contribution to the mathematical theory of epidemics,2020/3/12,20
+96,Quantal phase factors accompanying adiabatic changes,2020/11/17,20
+97,"The determination of the elastic field of an ellipsoidal inclusion, and related problems",2021/9/2,21
+98,Surface energy and the contact of elastic solids,2021/11/12,21
+99,"Stability of an inhomogeneous ferrofluid in a channel, subject to a normal field",2021/12/16,21
+100,Elastic wave propagation in anisotropic polycrystals: inferring physical properties of glacier ice,2022/1/12,21
