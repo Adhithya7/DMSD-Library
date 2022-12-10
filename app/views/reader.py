@@ -59,7 +59,7 @@ def search():
 @reader.route("/document/<id>", methods=["GET", "POST", "PUT", "DELETE"])
 def document(id):
     all_docs_query = docs_query
-    if request.method == "GET":
+    if request.method == "POST":
         doc_query = "select {cols} from {type} where docid={id}"
 
         for type in ['book', 'journal_volume', 'proceedings']:
@@ -106,21 +106,55 @@ def document(id):
         print(rows)
         return render_template("index.html", rows=rows)
 
-    elif request.method == "POST":
+    elif request.method == "PUT":
         rid = request.args.get('rid')
         #select a copy
-        copy_query = f"""SELECT docid, copyno, bid from copy
-                        WHERE docid in (SELECT sub.docid from ({available_query}) AS sub)"""
+        copy_query = f"""SELECT D.copyno, D.bid from ({available_query}) AS D
+                        WHERE docid={id} limit 1;"""
         cursor.execute(copy_query)
         copy = cursor.fetchall()
-        resv_query = f"""BEGIN;
-                        INSERT INTO RESERVES (RID, DOCID, COPYNO, BID) VALUES
-                        ({rid}, {copy[0][0]}, {copy[0][1]}, {copy[0][2]});
-                        INSERT INTO RESERVATION """
-        pass
-        
-    elif request.method == "PUT":
-        pass
+        print(copy)
+        resv_query = f"""INSERT INTO RESERVES (RID, DOCID, COPYNO, BID) VALUES
+                        ({rid}, {id}, {copy[0][0]}, {copy[0][1]});"""
+        try:
+            cursor.execute(resv_query)
+            connection.commit()
+            flash("Reserved Book", "success")
+        except Exception as e:
+            print(tb.format_exc())
+            flash(f"Unexpected error while reserving book: {e}")
+        return ()
 
-    elif request.method == "DELETE":
-        pass
+    elif request.method == "PUT":
+        rid = request.args.get('rid')
+        copy_query = f"""SELECT copyno, bid from reserves
+                        WHERE docid = {id} and rid = {rid};"""
+        cursor.execute(copy_query)
+        copy = cursor.fetchall()
+        borrow_query = f"""INSERT INTO BORROWS (RID, DOCID, COPYNO, BID) VALUES
+                        ({rid}, {id}, {copy[0][0]}, {copy[0][1]});"""
+        try:                        
+            cursor.execute(borrow_query)
+            connection.commit()
+            flash("Borrowed Book", "success")         
+        except Exception as e:
+            print(tb.format_exc())
+            flash(f"Unexpected error while Borrowing book: {e}")
+        return ()
+
+    elif request.method == "GET":
+        rid = request.args.get('rid')
+        borrow_query = f"""SELECT BOR_NO from BORROWS
+                        WHERE docid = {id} and rid = {rid}"""
+        return_query = f"""UPDATE BORROWING
+                            SET RDTIME = now()
+                            WHERE BOR_NO in ({borrow_query}) and RDTIME is NULL;"""
+        try:
+            cursor.execute(return_query)
+            connection.commit()
+            flash("Returned Book", "success") 
+        except Exception as e:
+            print(tb.format_exc())
+            flash(f"Unexpected error while Returning book: {e}")
+        return ()
+
