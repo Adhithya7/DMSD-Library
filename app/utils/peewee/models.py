@@ -1,8 +1,6 @@
 from peewee import *
 import datetime
 
-database_proxy = DatabaseProxy()
-
 class Documents(Model):
     class Meta:
         database = database_proxy

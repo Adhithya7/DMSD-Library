@@ -1,5 +1,4 @@
 import logging
-import uvicorn
 import os
 import sys
 from flask import Flask
@@ -23,9 +22,4 @@ def create_app(config_filename=''):
 app = create_app()
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        format='INFO',
-        level='%(asctime)s %(levelname)s %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S')
-
-    uvicorn.run(app, host="0.0.0.0", port=os.environ.get('PORT', 8080))
+    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
