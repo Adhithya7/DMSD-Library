@@ -28,7 +28,10 @@ def validate():
 
 @reader.route("/search", methods=["GET"])
 def search():
-    global all_docs_query
+    all_docs_query = """ SELECT docid, title, pdate, D.publisherid as publisherid, pubname,address from document D 
+                JOIN PUBLISHER P 
+                ON D.publisherid = P.publisherid
+            """
     cursor.execute(f'SELECT sub.docid from ({available_query}) AS sub')
     available_docs = cursor.fetchall()
     available_docs = [row[0] for row in available_docs]
@@ -60,14 +63,19 @@ def search():
 @reader.route("/document/<id>", methods=["GET", "POST", "PUT"])
 def document(id):
     print(id)
-    global all_docs_query
+    all_docs_query = """ SELECT docid, title, pdate, D.publisherid as publisherid, pubname,address from document D 
+                JOIN PUBLISHER P 
+                ON D.publisherid = P.publisherid
+            """
     print(all_docs_query)
     if request.method == "GET":
         doc_query = "select {cols} from {type} where docid={id}"
+
         for type in ['book', 'journal_volume', 'proceedings']:
             cursor.execute(doc_query.format(cols= 'docid',type=type, id=id))
             if cursor.fetchall():
                 doc_type = type
+
         if doc_type == 'book':
             person_query = f"""select doc.docid as docid, pname from ({doc_query.format(cols = 'docid, pid', type='authors', id=id)})
                             as doc join person p on doc.pid = p.pid"""
@@ -77,6 +85,7 @@ def document(id):
                             pubname, address, isbn, pname 
                             from ({all_docs_query} and D.docid={id}) as D
                             left join ({spe_query}) as S on D.docid = S.docid"""
+
         elif doc_type == 'proceedings':
             person_query = f"""select doc.docid as docid, p.pname as pname from ({doc_query.format(cols = 'docid, pid', type='chairs', id=id)})
                             as doc join person p on doc.pid = p.pid"""
@@ -88,8 +97,11 @@ def document(id):
                             left join ({spe_query}) as S on D.docid = S.docid"""
         elif doc_type == 'journal_volume':
             pass
+
         cursor.execute(final_query)
         rows = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        rows.insert(0, columns)
         print(rows)
         return render_template("index.html", rows=rows)
     if request.method == "POST":
