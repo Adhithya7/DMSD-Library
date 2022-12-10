@@ -21,3 +21,5 @@
 \copy reader from 'csvs/READER.csv' delimiter ',' CSV HEADER;
 
 \copy branch from 'csvs/BRANCH.csv' delimiter ',' CSV HEADER;
+
+\copy copy from 'csvs/COPY.csv' delimiter ',' CSV HEADER;

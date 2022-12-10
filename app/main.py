@@ -1,30 +1,26 @@
 import logging
-from fastapi.params import Depends
 import uvicorn
 import os
+import sys
+from flask import Flask
+from dotenv import load_dotenv
 
-from fastapi import FastAPI
-from fastapi.openapi.docs import get_swagger_ui_html
-from fastapi.openapi.utils import get_openapi
+CURR_DIR = os.path.dirname(os.path.abspath(__file__))
+print(CURR_DIR)
+sys.path.append(CURR_DIR)
 
-from app.api import api_router
-from app.utils.auth import check_basic_auth
+load_dotenv()
+def create_app(config_filename=''):
+    app = Flask(__name__)
+    app.secret_key = os.environ.get("SECRET_KEY", "missing_secret")
+    with app.app_context():
+        from views.reader import reader
+        app.register_blueprint(reader)
+        from views.admin import admin
+        app.register_blueprint(admin)
+    return app
 
-app = FastAPI(title="Library", openapi_url=None, docs_url=None, redoc_url=None)
-
-app.include_router(api_router)
-
-@app.get("/docs")
-async def get_docs(username: str = Depends(check_basic_auth)):
-    return get_swagger_ui_html(openapi_url="http://127.0.0.1:8000/openapi.json", title="docs")
-
-@app.get("/openapi.json")
-async def openapi(username: str = Depends(check_basic_auth)):
-    return get_openapi(title = "FastAPI", version="0.1.0", routes=app.routes)
-
-@app.get("/ping")
-def ping():
-    return {"message": "pong"}
+app = create_app()
 
 if __name__ == "__main__":
     logging.basicConfig(
@@ -32,4 +28,4 @@ if __name__ == "__main__":
         level='%(asctime)s %(levelname)s %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S')
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=os.environ.get('PORT', 8080))
