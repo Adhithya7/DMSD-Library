@@ -56,9 +56,8 @@ def search():
     rows.insert(0, columns)
     return render_template("index.html", rows=rows)
 
-@reader.route("/document/<id>", methods=["GET", "POST", "PUT"])
+@reader.route("/document/<id>", methods=["GET", "POST", "PUT", "DELETE"])
 def document(id):
-    print(id)
     all_docs_query = docs_query
     if request.method == "GET":
         doc_query = "select {cols} from {type} where docid={id}"
@@ -107,8 +106,21 @@ def document(id):
         print(rows)
         return render_template("index.html", rows=rows)
 
-    if request.method == "POST":
+    elif request.method == "POST":
+        rid = request.args.get('rid')
+        #select a copy
+        copy_query = f"""SELECT docid, copyno, bid from copy
+                        WHERE docid in (SELECT sub.docid from ({available_query}) AS sub)"""
+        cursor.execute(copy_query)
+        copy = cursor.fetchall()
+        resv_query = f"""BEGIN;
+                        INSERT INTO RESERVES (RID, DOCID, COPYNO, BID) VALUES
+                        ({rid}, {copy[0][0]}, {copy[0][1]}, {copy[0][2]});
+                        INSERT INTO RESERVATION """
         pass
         
-    if request.method == "PUT":
+    elif request.method == "PUT":
+        pass
+
+    elif request.method == "DELETE":
         pass

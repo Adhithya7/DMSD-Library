@@ -91,15 +91,15 @@ CREATE TABLE
 
 CREATE TABLE
     RESERVATION(
-        RES_NO serial PRIMARY KEY,
-        DTIME TIMESTAMP
+        RES_NO int PRIMARY KEY,
+        DTIME TIMESTAMP DEFAULT now()
     );
 
 CREATE TABLE
     BORROWING(
-        BOR_NO serial PRIMARY KEY,
-        BDTIME TIMESTAMP,
-        RDTIME TIMESTAMP
+        BOR_NO int PRIMARY KEY,
+        BDTIME TIMESTAMP DEFAULT now(),
+        RDTIME TIMESTAMP DEFAULT NULL
     );
 
 CREATE TABLE
@@ -125,7 +125,7 @@ CREATE TABLE
 CREATE TABLE
     RESERVES(
         RID int,
-        RESERVATION_NO int,
+        RESERVATION_NO serial,
         DOCID int,
         COPYNO int,
         BID int,
@@ -137,7 +137,7 @@ CREATE TABLE
 
 CREATE TABLE
     BORROWS(
-        BOR_NO int,
+        BOR_NO serial,
         DOCID int,
         COPYNO int,
         BID int,
