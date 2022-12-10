@@ -7,7 +7,7 @@ reader = Blueprint('reader', __name__, url_prefix='/reader', template_folder='te
 @reader.route("/test", methods=["GET"])
 def test():
     test_response = "all good"
-    return render_template("layout.html", rows=test_response)
+    return render_template("index.html", rows=test_response)
 
 @reader.route("/search", methods=["GET"])
 def search():
@@ -48,7 +48,8 @@ def search():
         tmp = list(row)
         tmp.append(str(request.args.get("available") or row[0] in available_docs))
         rows.append(tmp)
-    return render_template("index.html", rows=rows)
+    print(rows)
+    return render_template("explore.html", rows=rows)
 
 @reader.route("/document/{id}", methods=["GET", "POST", "PUT"])
 def document():
