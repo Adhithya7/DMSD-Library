@@ -49,12 +49,12 @@ def search():
     cursor.execute(all_docs_query)
     columns = [desc[0] for desc in cursor.description]
     all_docs = cursor.fetchall()
-    all_docs.insert(0, columns)
     rows = []
-    for row in all_docs[1:]:
+    for row in all_docs:
         tmp = list(row)
         tmp.append(str(request.args.get("available") or row[0] in available_docs))
         rows.append(tmp)
+    rows.insert(0, columns)
     return render_template("index.html", rows=rows)
 
 @reader.route("/document/<id>", methods=["GET", "POST", "PUT"])
@@ -69,17 +69,23 @@ def document(id):
             if cursor.fetchall():
                 doc_type = type
         if doc_type == 'book':
-            person_query = f"""select doc.docid as docid, p.pname as pname from ({doc_query.format(cols = 'docid, pid', type='authors', id=id)})
+            person_query = f"""select doc.docid as docid, pname from ({doc_query.format(cols = 'docid, pid', type='authors', id=id)})
                             as doc join person p on doc.pid = p.pid"""
-            spe_query = f"""select p.docid as docid, b.isbn as isbn ,p.pname as pname from ({person_query}) as p
+            spe_query = f"""select p.docid as docid, isbn ,pname from ({person_query}) as p
                             join book b on p.docid = b.docid"""
             final_query = f"""select D.docid as docid, title, pdate, D.publisherid as publisherid,
                             pubname, address, isbn, pname 
                             from ({all_docs_query} and D.docid={id}) as D
                             left join ({spe_query}) as S on D.docid = S.docid"""
         elif doc_type == 'proceedings':
-            person_query = f"""select doc.docid, p.pname from {doc_query.format(type='chairs', id=id)}
+            person_query = f"""select doc.docid as docid, p.pname as pname from ({doc_query.format(cols = 'docid, pid', type='chairs', id=id)})
                             as doc join person p on doc.pid = p.pid"""
+            spe_query = f"""select p.docid as docid, cdate, clocation, ceditor, pname from ({person_query}) as p
+                            join proceedings pr on p.docid = pr.docid"""
+            final_query = f"""select D.docid as docid, title, pdate, D.publisherid as publisherid,
+                            pubname, address, cdate, clocation, ceditor, pname
+                            from ({all_docs_query} and D.docid={id}) as D
+                            left join ({spe_query}) as S on D.docid = S.docid"""
         elif doc_type == 'journal_volume':
             pass
         cursor.execute(final_query)
