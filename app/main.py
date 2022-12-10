@@ -12,9 +12,7 @@ load_dotenv()
 
 def create_app(config_filename=''):
     app = Flask(__name__,
-                static_url_path='',
-                static_folder='app/static',
-                template_folder='app/templates')
+                template_folder='templates')
     app.secret_key = os.environ.get("SECRET_KEY", "missing_secret")
     with app.app_context():
         from views.reader import reader

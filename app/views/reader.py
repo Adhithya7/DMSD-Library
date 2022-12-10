@@ -44,11 +44,10 @@ def search():
     all_docs = cursor.fetchall()
     all_docs.insert(0, columns)
     rows = []
-    for row in all_docs:
+    for row in all_docs[1:]:
         tmp = list(row)
         tmp.append(str(request.args.get("available") or row[0] in available_docs))
         rows.append(tmp)
-    print(rows)
     return render_template("index.html", rows=rows)
 
 @reader.route("/document/{id}", methods=["GET", "POST", "PUT"])
