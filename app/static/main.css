@@ -1,0 +1,157 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+.navbar {
+    background: #773a31a4;
+}
+
+.nav_item {
+    font-size: 25px;
+}
+
+.nav-link,
+.navbar-brand {
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+}
+
+.title_library {
+    color: black;
+    font-size: 60px;
+    font-weight: 900;
+}
+
+.nav-link {
+    margin-right: 1em !important;
+}
+
+.nav-link:hover {
+    color: rgb(255, 255, 255);
+}
+
+.navbar-collapse {
+    justify-content: flex-end;
+}
+
+.header {
+    background-image: url('./background-min.png');
+    background-size: cover;
+    height: 100vh;
+}
+
+.description {
+    left: 50%;
+    position: absolute;
+    top: 70%;
+    transform: translate(-50%, -55%);
+}
+
+.description h1 {
+    color: #dbffc8;
+    margin-top: 10px;
+}
+
+.description p {
+    color: #fff;
+    font-size: 1.3rem;
+    line-height: 1.5;
+    margin-top: 10px;
+}
+
+.description button {
+    border: 1px solid #6ab446;
+    background: #6ab446;
+    border-radius: 0;
+    color: #fff;
+}
+
+.description button:hover {
+    border: 1px solid #fff;
+    background: #fff;
+    color: #000;
+}
+
+.features {
+    margin: 4em auto;
+    padding: 1em;
+    position: relative;
+}
+
+.feature-title {
+    color: #333;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.features img {
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+    margin-bottom: 16px;
+}
+
+.about_us {
+    text-align: justify;
+}
+
+.form-control {
+    max-width: fit-content;
+    margin-top: 20px;
+}
+
+.form_prompt {
+    margin-top: 100px;
+    color: rgb(255, 255, 255);
+    font-size: 30px;
+    font-weight: 900;
+}
+
+.page_title {
+    color: rgb(255, 255, 255);
+    margin: 30px;
+    text-align: center;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border-style: hidden;
+    box-shadow: 0 0 0 3px rgb(255, 255, 255);
+}
+
+td,
+th {
+    border: 1px solid #ccc;
+    text-align: left;
+    padding: 8px;
+    color: white;
+}
+
+.table-search {
+    color: white;
+    font-size: 25px;
+}
+
+.search-input {
+    border-radius: 5px;
+}
+.reserved_table,
+.borrowed_table {
+    margin-top: 50px;
+}
+
+.table_name {
+    color: white;
+    font-size: 25px;
+}
+.contact-details {
+    color: white;
+    text-align: center;
+    font-size: 25px;
+}
+.index-form-style {
+    text-align: center;
+}

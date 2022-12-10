@@ -1,19 +1,11 @@
 {% extends "layout.html" %}
+{% include 'flash.html' %}
 {%block content%}
 <h2 class="page_title">Resources</h2>
 
 <div class="container">
-    <div class="row">
-        <div class="col-md-2 table-search">
-            Search:
-        </div>
-        <div class="col-md-10">
-            <input type="text" class="search-input" placeholder="Enter keyword to filter by" />
-        </div>
-    </div>
-    <br />
     <div class="">
-        <table class="table">
+        <table class="table"  style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px;">
             {% if rows and rows|length > 0 %}
             <thead>
                 <tr>
@@ -32,8 +24,14 @@
                 <td>{{r[1]}}</td>
                 <td>{{r[2]}}</td>
                 <td>{{r[3]}}</td>
+                <td>{{r[4]}}</td>
+                <td>{{r[5]}}</td>
+                <td>{{r[6]}}</td>
+                <td>{{r[7]}}</td>
                 <td><a href="/get_doc" class="btn btn-secondary btn-sm">View</a>
+                    {% if r[7] == 'True' %}
                     <button type="button" class="btn btn-primary">Reserve</button>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
