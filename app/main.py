@@ -8,8 +8,13 @@ print(CURR_DIR)
 sys.path.append(CURR_DIR)
 
 load_dotenv()
+
+
 def create_app(config_filename=''):
-    app = Flask(__name__)
+    app = Flask(__name__,
+                static_url_path='',
+                static_folder='app/static',
+                template_folder='app/templates')
     app.secret_key = os.environ.get("SECRET_KEY", "missing_secret")
     with app.app_context():
         from views.reader import reader
@@ -17,6 +22,7 @@ def create_app(config_filename=''):
         from views.admin import admin
         app.register_blueprint(admin)
     return app
+
 
 app = create_app()
 

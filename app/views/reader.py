@@ -4,6 +4,11 @@ from utils import connection, cursor
 
 reader = Blueprint('reader', __name__, url_prefix='/reader')
 
+@reader.route("/test", methods=["GET"])
+def test():
+    test_response = "all good"
+    return render_template("layout.html", rows=test_response)
+
 @reader.route("/search", methods=["GET"])
 def search():
     all_docs_query = """ SELECT * from document D 
@@ -26,8 +31,9 @@ def search():
     all_docs = set(cursor.fetchall())
     doc_ids = [row[0] for row in all_docs]
 
+    print(all_docs)
 
-    return render_template("index.html", rows=all_docs)
+    return render_template("explore.html", rows=all_docs)
 
 @reader.route("/document/{id}", methods=["GET", "POST", "PUT"])
 def document():

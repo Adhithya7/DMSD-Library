@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{%block content%}
+<h2 class="page_title">Admin Console</h2>
+<div>
+    <form class="each-api">
+        <div class="form-group">
+            <label class="field-name" for="docIdToAdd">Document ID</label>
+            <input type="documentId" class="form-control form-input" id="docIdToAdd" placeholder="Enter document ID">
+        </div>
+        <div class="form-group">
+            <label class="field-name" for="copyNoToAdd">Copy No</label>
+            <input type="copyId" class="form-control form-input" id="copyNoToAdd" placeholder="Enter Copy No">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}

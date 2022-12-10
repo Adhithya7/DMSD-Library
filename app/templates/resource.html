@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{%block content%}
+<div class="container">
+    <div class="card card-customised p-3 mb-2 bg-dark text-white" style="width: 25rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ document[1][1] }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ document[1][3] }}</h6>
+
+            {% if document[1][3]== "book" %}
+            <span class="label label-default">ISBN: {{ document[1][4] }}</span>
+            <br>
+            <span class="label label-default">Author: {{ document[1][5] }}</span>
+            <br>
+            <span class="label label-default">Published on: {{ document[1][6] }}</span>
+            <br>
+            <span class="label label-default">Publisher: {{ document[1][7] }}</span>
+            <br>
+            <span class="label label-default">Address: {{ document[1][8] }}</span>
+            <br>
+            <span class="label label-default">Copy: {{ document[1][17] }}</span>
+            <br>
+            <span class="label label-default">Branch: {{ document[1][18] }}</span>
+            <br>
+            <span class="label label-default">Location: {{ document[1][19] }}</span>
+            <br>
+            <span class="label label-default">Position: {{ document[1][20] }}</span>
+
+            {% elif document[1][3] == "journal" %}
+            <br>
+            <span class="label label-default">Published on: {{ document[1][6] }}</span>
+            <br>
+            <span class="label label-default">Publisher: {{ document[1][7] }}</span>
+            <br>
+            <span class="label label-default">Address: {{ document[1][8] }}</span>
+            <br>
+            <span class="label label-default">Volume: {{ document[1][9] }}</span>
+            <br>
+            <span class="label label-default">Issue: {{ document[1][10] }}</span>
+            <br>
+            <span class="label label-default">Scope: {{ document[1][11] }}</span>
+            <br>
+            <span class="label label-default">Main Editor: {{ document[1][12].main }}</span>
+            <br>
+            <span class="label label-default">Guest Editor: {{ document[1][12].guest }}</span>
+            <br>
+            <span class="label label-default">Copy: {{ document[1][17] }}</span>
+            <br>
+            <span class="label label-default">Branch: {{ document[1][18] }}</span>
+            <br>
+            <span class="label label-default">Location: {{ document[1][19] }}</span>
+            <br>
+            <span class="label label-default">Position: {{ document[1][20] }}</span>
+
+            {% else %}
+            <span class="label label-default">Date of conference: {{ document[0].cDate }}</span>
+            <br>
+            <span class="label label-default">Location of conference: {{ document[0].cLocation }}</span>
+            <br>
+            <span class="label label-default">Editor: {{ document[0].cEditor }}</span>
+            <br>
+            <span class="label label-default">Chairs: {{ document[0].chairs }}</span>
+            {% endif %}
+
+            <br>
+            <br>
+            <a href="#" class="card-link">Reserve</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
