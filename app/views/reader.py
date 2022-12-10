@@ -12,7 +12,7 @@ available_query = """
                 on C.docid=B.docid and C.bid= B.bid and C.copyno = B.copyno
     """
 
-all_docs_query = """ SELECT docid, title, pdate, D.publisherid as publisherid, pubname,address from document D 
+docs_query = """ SELECT docid, title, pdate, D.publisherid as publisherid, pubname,address from document D 
                 JOIN PUBLISHER P 
                 ON D.publisherid = P.publisherid
             """
@@ -28,10 +28,7 @@ def validate():
 
 @reader.route("/search", methods=["GET"])
 def search():
-    all_docs_query = """ SELECT docid, title, pdate, D.publisherid as publisherid, pubname,address from document D 
-                JOIN PUBLISHER P 
-                ON D.publisherid = P.publisherid
-            """
+    all_docs_query = docs_query
     cursor.execute(f'SELECT sub.docid from ({available_query}) AS sub')
     available_docs = cursor.fetchall()
     available_docs = [row[0] for row in available_docs]
@@ -48,7 +45,6 @@ def search():
         all_docs_query += f" LIMIT 10"
     else:
         all_docs_query += f" LIMIT {ql}"
-    print(all_docs_query)
     cursor.execute(all_docs_query)
     columns = [desc[0] for desc in cursor.description]
     all_docs = cursor.fetchall()
@@ -63,11 +59,7 @@ def search():
 @reader.route("/document/<id>", methods=["GET", "POST", "PUT"])
 def document(id):
     print(id)
-    all_docs_query = """ SELECT docid, title, pdate, D.publisherid as publisherid, pubname,address from document D 
-                JOIN PUBLISHER P 
-                ON D.publisherid = P.publisherid
-            """
-    print(all_docs_query)
+    all_docs_query = docs_query
     if request.method == "GET":
         doc_query = "select {cols} from {type} where docid={id}"
 
@@ -96,15 +88,27 @@ def document(id):
                             from ({all_docs_query} and D.docid={id}) as D
                             left join ({spe_query}) as S on D.docid = S.docid"""
         elif doc_type == 'journal_volume':
-            pass
-
+            person_query = f"""select doc.docid as docid, issue_no, pname from ({doc_query.format(cols = 'docid, issue_no, pid', type='gedits', id=id)})
+                            as doc join person p on doc.pid = p.pid"""
+            issue_query = f"""select p.docid as docid, p.issue_no as issue_no, scope, pname from ({person_query}) as p
+                            join journal_issue ji on p.docid = ji.docid and p.issue_no = ji.issue_no"""
+            editor_query = f"""select doc.docid as docid, volume_no, pname from ({doc_query.format(cols = 'docid, editor, volume_no', type='journal_volume', id=id)})
+                            as doc join person p on doc.editor = p.pid"""
+            final_query = f"""select D.docid as docid, title, pdate, D.publisherid as publisherid,
+                            pubname, address, volume_no, issue_no, scope, S.pname
+                            from ({all_docs_query} and D.docid={id}) as D
+                            left join ({issue_query}) as S on D.docid = S.docid
+                            left join ({editor_query}) as E on D.docid = E.docid"""
+        print(final_query)
         cursor.execute(final_query)
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         rows.insert(0, columns)
         print(rows)
         return render_template("index.html", rows=rows)
+
     if request.method == "POST":
         pass
+        
     if request.method == "PUT":
         pass
