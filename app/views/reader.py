@@ -2,7 +2,7 @@ import traceback as tb
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from utils import connection, cursor
 
-reader = Blueprint('reader', __name__, url_prefix='/reader')
+reader = Blueprint('reader', __name__, url_prefix='/reader', template_folder='templates')
 
 @reader.route("/search", methods=["GET"])
 def search():
