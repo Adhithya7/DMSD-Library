@@ -1,8 +1,8 @@
-CREATE OR REPLACE FUNCTION abort_insert()
-RETURNS trigger LANGUAGE plpgsql as $$
-BEGIN
-RETURN null;
-END $$;
+-- CREATE OR REPLACE FUNCTION abort_insert()
+-- RETURNS trigger LANGUAGE plpgsql as $$
+-- BEGIN
+-- RETURN null;
+-- END $$;
 
 CREATE OR REPLACE FUNCTION ins_reserve()
 RETURNS trigger LANGUAGE plpgsql as $$
@@ -30,7 +30,7 @@ END $$;
 
 -- CREATE TRIGGER TOTAL_BOOKS_BORROWED
 -- BEFORE INSERT ON RESERVES
--- FOR EACH ROW
+-- FOR EACH STATEMENT
 -- WHEN (10 >= ALL(SELECT COUNT(*)
 --                 FROM (SELECT BOR_NO as txn, RID FROM BORROWS WHERE RDTIME is null
 --                       UNION ALL

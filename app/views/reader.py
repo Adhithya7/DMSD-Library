@@ -7,9 +7,23 @@ reader = Blueprint('reader', __name__, url_prefix='/reader', template_folder='te
 available_query = """ 
                 SELECT C.docid, C.copyno, C.bid from copy C
                 EXCEPT
-                SELECT C.docid, C.copyno, C.bid from copy C
+                ((SELECT C.docid, C.copyno, C.bid from copy C
                 JOIN borrows B
-                on C.docid=B.docid and C.bid= B.bid and C.copyno = B.copyno
+                on C.docid=B.docid and C.bid= B.bid and C.copyno = B.copyno)
+                UNION
+                (SELECT C.docid, C.copyno, C.bid from copy C
+                JOIN reserves R
+                on C.docid=R.docid and C.bid= R.bid and C.copyno = R.copyno)
+                UNION
+                (SELECT C.docid, C.copyno, C.bid from copy C
+                JOIN (SELECT * from BORROWS BR
+                JOIN BORROWING BS on BR.rid = {rid} and BR.bor_no = BS.bor_no
+                and BS.rdtime is null) as B
+                on C.docid = B.docid)
+                UNION
+                (SELECT C.docid, C.copyno, C.bid from copy C
+                JOIN (SELECT * from RESERVES where rid = {rid}) as B
+                on C.docid = B.docid))
     """
 
 docs_query = """ SELECT docid, title, pdate, D.publisherid as publisherid, pubname,address from document D 
@@ -28,8 +42,9 @@ def validate():
 
 @reader.route("/search", methods=["GET"])
 def search():
+    rid = request.args.get('rid')
     all_docs_query = docs_query
-    cursor.execute(f'SELECT sub.docid from ({available_query}) AS sub')
+    cursor.execute(f'SELECT sub.docid from ({available_query.format(rid=rid)}) AS sub')
     available_docs = cursor.fetchall()
     available_docs = [row[0] for row in available_docs]
     if request.args.get('docid'):
@@ -39,7 +54,7 @@ def search():
     if request.args.get("publisher_name"):
         all_docs_query += f" and P.publisher_name like %{request.args.get('publisher_name')}%"
     if request.args.get("available"):
-        all_docs_query += f"and D.docid in (SELECT sub.docid from ({available_query}) AS sub)"
+        all_docs_query += f"and D.docid in (SELECT sub.docid from ({available_query.format(rid=rid)}) AS sub)"
     ql = int(request.args.get('limit', 10))
     if ql < 1 or ql > 100:
         all_docs_query += f" LIMIT 10"
@@ -54,6 +69,7 @@ def search():
         tmp.append(str(request.args.get("available") or row[0] in available_docs))
         rows.append(tmp)
     rows.insert(0, columns)
+    print(rows)
     return render_template("index.html", rows=rows)
 
 @reader.route("/document/<id>", methods=["GET", "POST", "PUT", "DELETE"])
@@ -86,6 +102,7 @@ def document(id):
                             pubname, address, cdate, clocation, ceditor, pname
                             from ({all_docs_query} and D.docid={id}) as D
                             left join ({spe_query}) as S on D.docid = S.docid"""
+
         elif doc_type == 'journal_volume':
             person_query = f"""select doc.docid as docid, issue_no, pname from ({doc_query.format(cols = 'docid, issue_no, pid', type='gedits', id=id)})
                             as doc join person p on doc.pid = p.pid"""
@@ -106,14 +123,17 @@ def document(id):
         print(rows)
         return render_template("index.html", rows=rows)
 
-    elif request.method == "PUT":
+    elif request.method == "GET":
         rid = request.args.get('rid')
         #select a copy
-        copy_query = f"""SELECT D.copyno, D.bid from ({available_query}) AS D
+        copy_query = f"""SELECT D.copyno, D.bid from ({available_query.format(rid=rid)}) AS D
                         WHERE docid={id} limit 1;"""
         cursor.execute(copy_query)
         copy = cursor.fetchall()
-        print(copy)
+        if not copy:
+            flash("User has already reserved/borrowed a different copy of the book", "danger")
+            print("User has already reserved/borrowed a different copy of the book")
+            return ()
         resv_query = f"""INSERT INTO RESERVES (RID, DOCID, COPYNO, BID) VALUES
                         ({rid}, {id}, {copy[0][0]}, {copy[0][1]});"""
         try:
@@ -142,7 +162,7 @@ def document(id):
             flash(f"Unexpected error while Borrowing book: {e}")
         return ()
 
-    elif request.method == "GET":
+    elif request.method == "DELETE":
         rid = request.args.get('rid')
         borrow_query = f"""SELECT BOR_NO from BORROWS
                         WHERE docid = {id} and rid = {rid}"""
@@ -158,3 +178,14 @@ def document(id):
             flash(f"Unexpected error while Returning book: {e}")
         return ()
 
+@reader.route("/document", methods=["GET", "POST", "PUT", "DELETE"])
+def list_documents():
+    rid = request.args.get('rid')
+
+    pass
+
+@reader.route("/fines/<rid>", methods=["GET"])
+def fine(rid):
+    docid = request.args.get('docid')
+    all_docs_query = docs_query
+    reader_docs_query = f"""SELECT docid from """
