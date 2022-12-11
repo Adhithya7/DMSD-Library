@@ -1,20 +1,6 @@
 {% extends "layout.html" %}
 {% include 'flash.html' %}
 {%block content%}
-<div>
-    <div style="text-align: center;">
-        <form method="GET">
-            <div class="form-group">
-                <label class="visually-hidden form_prompt" for="fn">Enter your card number:</label>
-                <input style="align-items: center;" type="text" name="id" class="form-control" id="fn"
-                    placeholder="Card Number" value="{{request.args.get('id') or ''}}">
-            </div>
-            <div>
-                <input type="submit" class="btn btn-primary" value="Submit" />
-            </div>
-        </form>
-    </div>
-</div>
 <header class="page-header container-fluid">
     <div class="description">
         <h1>About us:</h1>

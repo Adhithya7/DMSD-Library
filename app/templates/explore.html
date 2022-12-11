@@ -2,40 +2,66 @@
 {% include 'flash.html' %}
 {%block content%}
 <h2 class="page_title">Resources</h2>
-
 <div class="container">
-    <div class="">
-        <table class="table"  style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px;">
-            {% if rows and rows|length > 0 %}
-            <thead>
-                <tr>
-                    {# generate th tags for each column to display #}
-                    {# IMPORTANT use table column names as the headings, replace with space #}
-                    {% for r in rows[0] %}
-                    <th>{{r}}</th>
-                    {% endfor %}
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            {% endif %}
-            {% for r in rows[1:] %}
+    <form method="GET" id="header-search-books" class="form-area" novalidate="novalidate" autocomplete="off">
+        <input type="hidden" id="readerID" name="rid" value="{{rid}}">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="styled-input wide multi">
+                    <div class="document-id" id="input-document-id">
+                        <input type="text" name="docid" id="fn" autocomplete="off" data-placeholder-focus="false" required />
+                        <label>Document ID</label>
+                    </div>
+                    <div class="title" id="input-title">
+                        <input type="text" name="title" id="ln" autocomplete="off" data-placeholder-focus="false" required />
+                        <label>Title</label>
+                    </div>
+                    <div class="pub-name" id="input-pub-name">
+                        <input type="text" name="publisher_name" id="city" autocomplete="off" data-placeholder-focus="false" />
+                        <label>Publisher Name</label>
+                    </div>
+                    <div class="availability" id="select-availability">
+                        <select name="available">
+                            <option value="">Show all</option>
+                            <option value="True">Show only Available</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 no-pad-left-10">
+                <button type="submit" class="primary-btn serach-btn" id="submit_btn">SEARCH</button>
+            </div>
+        </div>
+      </form>
+</div>
+<br>
+<br>
+<div class="result-table">
+    <table class="table" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px;">
+        {% if rows and rows|length > 0 %}
+        <thead>
             <tr>
-                <td>{{r[0]}}</td>
-                <td>{{r[1]}}</td>
-                <td>{{r[2]}}</td>
-                <td>{{r[3]}}</td>
-                <td>{{r[4]}}</td>
-                <td>{{r[5]}}</td>
-                <td>{{r[6]}}</td>
-                <td>{{r[7]}}</td>
-                <td><a href="/get_doc" class="btn btn-secondary btn-sm">View</a>
-                    {% if r[7] == 'True' %}
-                    <button type="button" class="btn btn-primary">Reserve</button>
-                    {% endif %}
-                </td>
+                <th style="text-align: center;">Document ID</th>
+                <th style="text-align: center;">Title</th>
+                <th style="text-align: center;">Published on</th>
+                <th style="text-align: center;">Publisher Name</th>
+                <th style="text-align: center;">Actions</th>
             </tr>
-            {% endfor %}
-        </table>
-    </div>
+        </thead>
+        {% endif %}
+        {% for r in rows[1:] %}
+        <tr>
+            <td style="text-align: center;">{{r[0]}}</td>
+            <td>{{r[1]}}</td>
+            <td>{{r[2].strftime('%Y-%m-%d')}}</td>
+            <td style="text-align: center;">{{r[4]}}</td>
+            <td><a href="{{url_for('reader.search', rid=request.args.get('rid'))}}" class="btn btn-primary">View</a>
+                {% if r[6] == 'True' %}
+                <button type="button" class="btn btn-primary">Reserve</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
 {% endblock %}

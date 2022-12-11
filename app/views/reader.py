@@ -1,5 +1,5 @@
 import traceback as tb
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, make_response
 from utils import connection, cursor
 
 reader = Blueprint('reader', __name__, url_prefix='/reader', template_folder='templates')
@@ -31,14 +31,20 @@ docs_query = """ SELECT docid, title, pdate, D.publisherid as publisherid, pubna
                 ON D.publisherid = P.publisherid
             """
 
+@reader.route("/", methods=["GET"])
+def base():
+    return render_template("home.html")
+
 @reader.route("/validate", methods=["GET"])
 def validate():
+    rid = request.args.get('rid')
     query = f'SELECT * from READER R where rid={request.args.get("rid")}'
     cursor.execute(query)
     resp = cursor.fetchall()
     if resp:
-        return render_template("explore.html")
-    return render_template("home.html", valid='false')
+        return render_template("index.html")
+    flash("Please register with the library first.", "danger")
+    return render_template("home.html", rid=rid)
 
 @reader.route("/search", methods=["GET"])
 def search():
@@ -46,13 +52,14 @@ def search():
     all_docs_query = docs_query
     cursor.execute(f'SELECT sub.docid from ({available_query.format(rid=rid)}) AS sub')
     available_docs = cursor.fetchall()
-    available_docs = [row[0] for row in available_docs]
+    available_docs = set([row[0] for row in available_docs])
+    print(available_docs)
     if request.args.get('docid'):
         all_docs_query += f"and D.docid={request.args.get('docid')}"
     if request.args.get("title"):
-        all_docs_query += f" and D.title like %{request.args.get('title')}%"
+        all_docs_query += f" and D.title ilike '%{request.args.get('title')}%'"
     if request.args.get("publisher_name"):
-        all_docs_query += f" and P.publisher_name like %{request.args.get('publisher_name')}%"
+        all_docs_query += f" and P.pubname ilike '%{request.args.get('publisher_name')}%'"
     if request.args.get("available"):
         all_docs_query += f"and D.docid in (SELECT sub.docid from ({available_query.format(rid=rid)}) AS sub)"
     ql = int(request.args.get('limit', 10))
@@ -69,13 +76,13 @@ def search():
         tmp.append(str(request.args.get("available") or row[0] in available_docs))
         rows.append(tmp)
     rows.insert(0, columns)
-    print(rows)
-    return render_template("index.html", rows=rows)
+    # print(rows)
+    return render_template("explore.html", rows=rows, rid=rid)
 
 @reader.route("/document/<id>", methods=["GET", "POST", "PUT", "DELETE"])
 def document(id):
     all_docs_query = docs_query
-    if request.method == "POST":
+    if request.method == "GET":  # View document
         doc_query = "select {cols} from {type} where docid={id}"
 
         for type in ['book', 'journal_volume', 'proceedings']:
@@ -123,7 +130,7 @@ def document(id):
         print(rows)
         return render_template("index.html", rows=rows)
 
-    elif request.method == "GET":
+    elif request.method == "POST": # RESERVE DOC
         rid = request.args.get('rid')
         #select a copy
         copy_query = f"""SELECT D.copyno, D.bid from ({available_query.format(rid=rid)}) AS D
@@ -145,7 +152,7 @@ def document(id):
             flash(f"Unexpected error while reserving book: {e}")
         return ()
 
-    elif request.method == "PUT":
+    elif request.method == "PUT": # BORROW DOC
         rid = request.args.get('rid')
         copy_query = f"""SELECT copyno, bid from reserves
                         WHERE docid = {id} and rid = {rid};"""
@@ -162,7 +169,7 @@ def document(id):
             flash(f"Unexpected error while Borrowing book: {e}")
         return ()
 
-    elif request.method == "DELETE":
+    elif request.method == "DELETE":  # RETURN DOC
         rid = request.args.get('rid')
         borrow_query = f"""SELECT BOR_NO from BORROWS
                         WHERE docid = {id} and rid = {rid}"""

@@ -1,20 +1,16 @@
-{% extends "layout.html" %}
+{% extends "secure_layout.html" %}
 {% include 'flash.html' %}
 {%block content%}
-<div>
-    <div style="text-align: center;">
-        <form method="GET">
-            <div class="form-group">
-                <label class="visually-hidden form_prompt" for="fn">Enter your card number:</label>
-                <input style="align-items: center;" type="text" name="id" class="form-control" id="fn" placeholder="Card Number"
-                    value="{{request.get('id') or ''}}">
-            </div>
-            <div>
-                <input type="submit" class="btn btn-primary" value="Submit" />
-                <a href="{{url_for('main.validate', id=value)}}" class="btn btn-secondary btn-sm">Edit</a>
-                <!-- <a href="/validate/?id=1000" value="123" class="btn btn-secondary btn-sm">Edit</a> -->
-            </div>
-        </form>
-    </div>
+<div style="text-align: center;">
+    <form method="GET" action="{{url_for('reader.validate', rid=rid)}}">
+        <div class="form-group">
+            <label class="visually-hidden form_prompt" for="fn">Enter your card number:</label>
+            <br>
+            <input type="text" name="rid" class="rid-input" id="fn" placeholder="Card Number">
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
 </div>
 {% endblock %}

@@ -1,0 +1,21 @@
+<form class="row row-cols-lg-auto g-3 align-items-center" method="GET">
+        <div class="col-12">
+            <label class="search-label" for="docid">Document ID</label>
+            <input type="text" name="docid" class="form-control" id="fn" placeholder="Document ID"
+                value="{{request.args.get('docid') or ''}}">
+        </div>
+        <div class="col-12">
+            <label class="search-label" for="title">Title</label>
+            <input type="text" name="title" class="form-control" id="ln" placeholder="Title"
+                value="{{request.args.get('title') or ''}}">
+        </div>
+        <div class="col-12">
+            <label class="search-label" for="publisher_name">Publisher Name</label>
+            <input type="text" name="publisher_name" class="form-control" id="email" placeholder="Publisher Name"
+                value="{{request.args.get('publisher_name') or ''}}">
+        </div>
+        <div class="col-12">
+            <input type="submit" class="btn btn-primary" value="Filter" />
+            <a href="?" class="btn btn-secondary">Reset</a>
+        </div>
+    </form>
