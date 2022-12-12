@@ -119,7 +119,7 @@ def document(id):
             editor_query = f"""select doc.docid as docid, volume_no, pname from ({doc_query.format(cols = 'docid, editor, volume_no', type='journal_volume', id=id)})
                             as doc join person p on doc.editor = p.pid"""
             final_query = f"""select D.docid as docid, title, pdate, D.publisherid as publisherid,
-                            pubname, address, volume_no, issue_no, scope, S.pname as guest_editor, E.pname as chief_editor
+                            pubname, address, volume_no, issue_no, scope, S.pname as issue_editor, E.pname as chief_editor
                             from ({all_docs_query} and D.docid={id}) as D
                             left join ({issue_query}) as S on D.docid = S.docid
                             left join ({editor_query}) as E on D.docid = E.docid"""
