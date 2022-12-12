@@ -9,15 +9,18 @@
             <div class="col-md-10">
                 <div class="styled-input wide multi">
                     <div class="document-id" id="input-document-id">
-                        <input type="text" name="docid" id="fn" autocomplete="off" data-placeholder-focus="false" required />
+                        <input type="text" name="docid" id="fn" autocomplete="off" data-placeholder-focus="false"
+                            required />
                         <label>Document ID</label>
                     </div>
                     <div class="title" id="input-title">
-                        <input type="text" name="title" id="ln" autocomplete="off" data-placeholder-focus="false" required />
+                        <input type="text" name="title" id="ln" autocomplete="off" data-placeholder-focus="false"
+                            required />
                         <label>Title</label>
                     </div>
                     <div class="pub-name" id="input-pub-name">
-                        <input type="text" name="publisher_name" id="city" autocomplete="off" data-placeholder-focus="false" />
+                        <input type="text" name="publisher_name" id="city" autocomplete="off"
+                            data-placeholder-focus="false" />
                         <label>Publisher Name</label>
                     </div>
                     <div class="availability" id="select-availability">
@@ -32,7 +35,7 @@
                 <button type="submit" class="primary-btn serach-btn" id="submit_btn">SEARCH</button>
             </div>
         </div>
-      </form>
+    </form>
 </div>
 <br>
 <br>
@@ -55,9 +58,14 @@
             <td>{{r[1]}}</td>
             <td>{{r[2].strftime('%Y-%m-%d')}}</td>
             <td style="text-align: center;">{{r[4]}}</td>
-            <td><a href="{{url_for('reader.search', rid=request.args.get('rid'))}}" class="btn btn-primary">View</a>
+            <td><a href="{{url_for('reader.document', id=r[0], available=r[6], rid=request.args.get('rid'))}}"
+                    class="btn btn-primary">View</a>
                 {% if r[6] == 'True' %}
-                <button type="button" class="btn btn-primary">Reserve</button>
+                <form
+                    action="{{url_for('reader.document', id=r[0], available=r[6], rid=request.args.get('rid'))}}"
+                    method="POST">
+                    <button type="submit" class="btn btn-primary">Reserve</button>
+                </form>
                 {% endif %}
             </td>
         </tr>

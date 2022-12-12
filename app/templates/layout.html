@@ -45,7 +45,7 @@
                     <a class="nav-link" href="{{url_for('reader.search', rid=request.args.get('rid'))}}">Explore</a>
                 </li>
                 <li class="nav_item">
-                    <a class="nav-link" href="/my_transactions">My Transactions</a>
+                    <a class="nav-link" href="{{url_for('reader.my_transactions', rid=request.args.get('rid'))}}">My Transactions</a>
                 </li>
                 <li class="nav_item">
                     <a class="nav-link" href="/admin">Admin</a>

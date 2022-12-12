@@ -1,70 +1,104 @@
 {% extends "layout.html" %}
+{% include 'flash.html' %}
 {%block content%}
 <div class="container">
-    <div class="card card-customised p-3 mb-2 bg-dark text-white" style="width: 25rem;">
+    {% if doc_type== "book" %}
+    <div class="card card-customised p-3 mb-2 bg-dark text-white" style="width: 30rem;">
         <div class="card-body">
-            <h5 class="card-title">{{ document[1][1] }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{ document[1][3] }}</h6>
-
-            {% if document[1][3]== "book" %}
-            <span class="label label-default">ISBN: {{ document[1][4] }}</span>
+            <h5 class="card-title">{{ rows[1][1] }}</h5>
             <br>
-            <span class="label label-default">Author: {{ document[1][5] }}</span>
+            <h6 class="card-subtitle mb-2">Book</h6>
             <br>
-            <span class="label label-default">Published on: {{ document[1][6] }}</span>
+            <span class="label label-default">ISBN: {{ rows[1][6] }}</span>
             <br>
-            <span class="label label-default">Publisher: {{ document[1][7] }}</span>
+            <span class="label label-default">Author: {{ rows[1][7] }}</span>
             <br>
-            <span class="label label-default">Address: {{ document[1][8] }}</span>
+            <span class="label label-default">Published on: {{ rows[1][2].strftime('%Y-%m-%d') }}</span>
             <br>
-            <span class="label label-default">Copy: {{ document[1][17] }}</span>
+            <span class="label label-default">Publisher: {{ rows[1][4] }}</span>
             <br>
-            <span class="label label-default">Branch: {{ document[1][18] }}</span>
+            <span class="label label-default">Address: {{ rows[1][5] }}</span>
             <br>
-            <span class="label label-default">Location: {{ document[1][19] }}</span>
             <br>
-            <span class="label label-default">Position: {{ document[1][20] }}</span>
-
-            {% elif document[1][3] == "journal" %}
-            <br>
-            <span class="label label-default">Published on: {{ document[1][6] }}</span>
-            <br>
-            <span class="label label-default">Publisher: {{ document[1][7] }}</span>
-            <br>
-            <span class="label label-default">Address: {{ document[1][8] }}</span>
-            <br>
-            <span class="label label-default">Volume: {{ document[1][9] }}</span>
-            <br>
-            <span class="label label-default">Issue: {{ document[1][10] }}</span>
-            <br>
-            <span class="label label-default">Scope: {{ document[1][11] }}</span>
-            <br>
-            <span class="label label-default">Main Editor: {{ document[1][12].main }}</span>
-            <br>
-            <span class="label label-default">Guest Editor: {{ document[1][12].guest }}</span>
-            <br>
-            <span class="label label-default">Copy: {{ document[1][17] }}</span>
-            <br>
-            <span class="label label-default">Branch: {{ document[1][18] }}</span>
-            <br>
-            <span class="label label-default">Location: {{ document[1][19] }}</span>
-            <br>
-            <span class="label label-default">Position: {{ document[1][20] }}</span>
-
-            {% else %}
-            <span class="label label-default">Date of conference: {{ document[0].cDate }}</span>
-            <br>
-            <span class="label label-default">Location of conference: {{ document[0].cLocation }}</span>
-            <br>
-            <span class="label label-default">Editor: {{ document[0].cEditor }}</span>
-            <br>
-            <span class="label label-default">Chairs: {{ document[0].chairs }}</span>
+            {% if available == 'True' %}
+            <form action="{{url_for('reader.document', id=rows[1][0], available=request.args.get('available'), rid=request.args.get('rid'))}}"
+                method="POST">
+                <button type="submit" class="btn btn-primary">Reserve</button>
+            </form>
             {% endif %}
-
-            <br>
-            <br>
-            <a href="#" class="card-link">Reserve</a>
         </div>
     </div>
+
+    {% elif doc_type == "journal_volume" %}
+    <div class="card card-customised p-3 mb-2 bg-dark text-white" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ rows[1][1] }}</h5>
+            <br>
+            <h6 class="card-subtitle mb-2">Journal Volume</h6>
+            <br>
+            <span class="label label-default">Published on: {{ rows[1][2].strftime('%Y-%m-%d') }}</span>
+            <br>
+            <span class="label label-default">Publisher: {{ rows[1][4] }}</span>
+            <br>
+            <span class="label label-default">Address: {{ rows[1][5] }}</span>
+            <br>
+            <span class="label label-default">Volume: {{ rows[1][6] }}</span>
+            <br>
+            <span class="label label-default">Main Editor: {{ rows[1][10] }}</span>
+            <br>
+            <br>
+            {%- for row in rows[1:] %}
+            <span class="label label-default">Issue: {{ row[7] }} Guest Editor: {{ row[9] }}</span>
+            <br>
+            {% endfor %}
+            <br>
+            <span class="label label-default">Scope: {{ rows[1][8] }}</span>
+            <br>
+            <br>
+            {% if available == 'True' %}
+            <form action="{{url_for('reader.document', id=rows[1][0], available=request.args.get('available'), rid=request.args.get('rid'))}}"
+                method="POST">
+                <button type="submit" class="btn btn-primary">Reserve</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    {% else %}
+    <div class="card card-customised p-3 mb-2 bg-dark text-white" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ rows[1][1] }}</h5>
+            <br>
+            <h6 class="card-subtitle mb-2">Conference Proceeding</h6>
+            <br>
+            <span class="label label-default">Published on: {{ rows[1][2].strftime('%Y-%m-%d') }}</span>
+            <br>
+            <span class="label label-default">Publisher: {{ rows[1][4] }}</span>
+            <br>
+            <span class="label label-default">Address: {{ rows[1][5] }}</span>
+            <br>
+            <span class="label label-default">Date of conference: {{ rows[1][6].strftime('%Y-%m-%d') }}</span>
+            <br>
+            <span class="label label-default">Location of conference: {{ rows[1][7] }}</span>
+            <br>
+            <span class="label label-default">Editor: {{ rows[1][8] }}</span>
+            <br>
+            <span class="label label-default">Chairs:</span>
+            <br>
+            {%- for row in rows[1:] %}
+            <span class="label label-default">{{row[9]}}</span>
+            <br>
+            {% endfor %}
+            <br>
+            <br>
+            {% if available == 'True' %}
+            <form action="{{url_for('reader.document', id=rows[1][0], available=request.args.get('available'), rid=request.args.get('rid'))}}"
+                method="POST">
+                <button type="submit" class="btn btn-primary">Reserve</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

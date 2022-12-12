@@ -53,7 +53,7 @@ def search():
     cursor.execute(f'SELECT sub.docid from ({available_query.format(rid=rid)}) AS sub')
     available_docs = cursor.fetchall()
     available_docs = set([row[0] for row in available_docs])
-    print(available_docs)
+    # print(available_docs)
     if request.args.get('docid'):
         all_docs_query += f"and D.docid={request.args.get('docid')}"
     if request.args.get("title"):
@@ -83,6 +83,7 @@ def search():
 def document(id):
     all_docs_query = docs_query
     if request.method == "GET":  # View document
+        available=request.args.get('available')
         doc_query = "select {cols} from {type} where docid={id}"
 
         for type in ['book', 'journal_volume', 'proceedings']:
@@ -118,17 +119,17 @@ def document(id):
             editor_query = f"""select doc.docid as docid, volume_no, pname from ({doc_query.format(cols = 'docid, editor, volume_no', type='journal_volume', id=id)})
                             as doc join person p on doc.editor = p.pid"""
             final_query = f"""select D.docid as docid, title, pdate, D.publisherid as publisherid,
-                            pubname, address, volume_no, issue_no, scope, S.pname
+                            pubname, address, volume_no, issue_no, scope, S.pname as guest_editor, E.pname as chief_editor
                             from ({all_docs_query} and D.docid={id}) as D
                             left join ({issue_query}) as S on D.docid = S.docid
                             left join ({editor_query}) as E on D.docid = E.docid"""
-        print(final_query)
+        # print(final_query)
         cursor.execute(final_query)
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         rows.insert(0, columns)
         print(rows)
-        return render_template("index.html", rows=rows)
+        return render_template("resource.html", rows=rows, doc_type=doc_type, available=available)
 
     elif request.method == "POST": # RESERVE DOC
         rid = request.args.get('rid')
@@ -150,7 +151,7 @@ def document(id):
         except Exception as e:
             print(tb.format_exc())
             flash(f"Unexpected error while reserving book: {e}")
-        return ()
+        return redirect(request.url)
 
     elif request.method == "PUT": # BORROW DOC
         rid = request.args.get('rid')
@@ -184,6 +185,15 @@ def document(id):
             print(tb.format_exc())
             flash(f"Unexpected error while Returning book: {e}")
         return ()
+
+@reader.route("/my_transactions", methods=["GET", "POST", "PUT", "DELETE"])
+def my_transactions():
+    rid = request.args.get('rid')
+    query = f'SELECT * from RESERVES R where rid={rid}'
+    cursor.execute(query)
+    resp = cursor.fetchall()
+    print(resp)
+    return render_template("my_transactions.html", rows=resp, rid=rid)
 
 @reader.route("/document", methods=["GET", "POST", "PUT", "DELETE"])
 def list_documents():
