@@ -186,8 +186,8 @@ def document(id):
             flash(f"Unexpected error while Returning book: {e}")
         return ()
 
-@reader.route("/my_transactions", methods=["GET", "POST", "PUT", "DELETE"])
-def my_transactions():
+@reader.route("/document", methods=["GET"])
+def list_documents():
     rid = request.args.get('rid')
     reserve_query = f"""SELECT docid, bid, dtime as tx_time, NULL as ret_time, 'RESERVED' as status  from RESERVES R
                         JOIN RESERVATION RI ON R.reservation_no = RI.res_no and R.rid = {rid}"""
@@ -206,11 +206,6 @@ def my_transactions():
     print(resp)
     return render_template("my_transactions.html", rows=resp, rid=rid)
 
-@reader.route("/document", methods=["GET", "POST", "PUT", "DELETE"])
-def list_documents():
-    rid = request.args.get('rid')
-
-    pass
 
 @reader.route("/fines/<rid>", methods=["GET"])
 def fine(rid):
