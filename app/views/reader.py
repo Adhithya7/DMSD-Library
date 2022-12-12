@@ -189,8 +189,19 @@ def document(id):
 @reader.route("/my_transactions", methods=["GET", "POST", "PUT", "DELETE"])
 def my_transactions():
     rid = request.args.get('rid')
-    query = f'SELECT * from RESERVES R where rid={rid}'
-    cursor.execute(query)
+    reserve_query = f"""SELECT docid, bid, dtime as tx_time, NULL as ret_time, 'RESERVED' as status  from RESERVES R
+                        JOIN RESERVATION RI ON R.reservation_no = RI.res_no and R.rid = {rid}"""
+    borrow_query = f"""SELECT docid, bid, bdtime as tx_time, rdtime as ret_time, 'RETURNED' as STATUS from BORROWS B
+                      JOIN BORROWING BI ON B.bor_no = BI.bor_no and B.rid = {rid} and BI.rdtime is not null"""
+    return_query = f"""SELECT docid, bid, bdtime as tx_time, NULL as ret_time, 'BORROWED' as STATUS from BORROWS B
+                       JOIN BORROWING BI ON B.bor_no = BI.bor_no and B.rid = {rid} and BI.rdtime is null"""
+    docs = f"""  SELECT sub1.docid, title, location as b_name, tx_time, ret_time, status from 
+                (({reserve_query}) UNION ({borrow_query}) UNION ({return_query})) as sub1
+                JOIN DOCUMENT D on sub1.docid = D.docid
+                JOIN BRANCH B ON sub1.bid = B.bid
+                """
+                
+    cursor.execute(docs)
     resp = cursor.fetchall()
     print(resp)
     return render_template("my_transactions.html", rows=resp, rid=rid)
