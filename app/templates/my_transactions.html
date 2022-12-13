@@ -3,131 +3,118 @@
 <h2 class="page_title">My Transactions</h2>
 
 <div class="container reserved_table">
-    <div class="table_name">My Reserved:</div>
+    <div class="table_name">Reserved:</div>
     <br />
     <div class="">
-        <table class="table">
-            {% if rows and reserved|length > 0 %}
+        <table class="table" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px;">
+            {% if rows |length > 0 %}
             <thead>
                 <tr>
                     {# generate th tags for each column to display #}
                     {# IMPORTANT use table column names as the headings, replace with space #}
-                    {% for r in reserved[0] %}
+                    {% for r in rows[0] %}
+                    {% if r != 'Returned On' %}
+                    <th>{{r}}</th>
+                    {% endif %}
+                    {% endfor %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            {% endif %}
+            {% for r in rows[1:] %}
+            {% if r[5] == 'RESERVED' %}
+            <tr>
+                <td>{{r[0]}}</td>
+                <td>{{r[1]}}</td>
+                <td>{{r[2]}}</td>
+                <td>{{r[3].strftime('%Y-%m-%d')}}</td>
+                <td>{{r[5]}}</td>
+                <td><a href="{{url_for('reader.document', id=r[0], available=r[6], rid=request.args.get('rid'))}}"
+                        class="btn btn-primary">View</a>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="container borrowed_table">
+    <div class="table_name">Borrowed:</div>
+    <br />
+    <div class="">
+        <table class="table" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px;">
+            {% if rows |length > 0 %}
+            <thead>
+                <tr>
+                    {# generate th tags for each column to display #}
+                    {# IMPORTANT use table column names as the headings, replace with space #}
+                    {% for r in rows[0] %}
+                    {% if r != 'Returned On' %}
+                    <th>{{r}}</th>
+                    {% endif %}
+                    {% endfor %}
+                    <th style="text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            {% endif %}
+            {% for r in rows[1:] %}
+            {% if r[5] == 'BORROWED' %}
+            <tr>
+                <td>{{r[0]}}</td>
+                <td>{{r[1]}}</td>
+                <td>{{r[2]}}</td>
+                <td>{{r[3].strftime('%Y-%m-%d')}}</td>
+                <td>{{r[5]}}</td>
+                <td style="display:flex;"><a href="{{url_for('reader.document', id=r[0], available=r[6], rid=request.args.get('rid'))}}"
+                        class="btn btn-primary" style="margin-right: 10px;">View</a>
+                    <form action="{{url_for('reader.document', id=r[0], available=r[6], rid=request.args.get('rid'))}}">
+                        <input type="hidden" name="_METHOD" value="PUT" />
+                        <button type="submit" class="btn btn-primary">Return</button>
+                    </form>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="container reserved_table">
+    <div class="table_name">Returned:</div>
+    <br />
+    <div class="">
+        <table class="table" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px;">
+            {% if rows |length > 0 %}
+            <thead>
+                <tr>
+                    {# generate th tags for each column to display #}
+                    {# IMPORTANT use table column names as the headings, replace with space #}
+                    {% for r in rows[0] %}
                     <th>{{r}}</th>
                     {% endfor %}
                     <th>Actions</th>
                 </tr>
             </thead>
             {% endif %}
-            {% for r in reserved[1:] %}
+            {% for r in rows[1:] %}
+            {% if r[5] == 'RETURNED' %}
             <tr>
                 <td>{{r[0]}}</td>
                 <td>{{r[1]}}</td>
                 <td>{{r[2]}}</td>
-                <td>{{r[3]}}</td>
-                <td><a href="/get_doc" class="btn btn-secondary btn-sm">View</a>
-                    <button type="button" class="btn btn-primary">Reserve</button>
+                <td>{{r[3].strftime('%Y-%m-%d')}}</td>
+                <td>{{r[4].strftime('%Y-%m-%d')}}</td>
+                <td>{{r[5]}}</td>
+                <td><a href="{{url_for('reader.document', id=r[0], available=r[6], rid=request.args.get('rid'))}}"
+                        class="btn btn-primary">View</a>
                 </td>
             </tr>
+            {% endif %}
             {% endfor %}
         </table>
     </div>
-
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Type</th>
-            <th>Branch Name</th>
-            <th>Branch Location</th>
-            <th>Actions</th>
-        </tr>
-        <tr>
-            <td>Space</td>
-            <td>book</td>
-            <td>David</td>
-            <td>null</td>
-            <td>Cliffton</td>
-            <td>Newark</td>
-            <td>Yes</td>
-            <td><button type="button" class="btn btn-primary">View</button>
-                <button type="button" class="btn btn-primary">Cancel</button>
-            </td>
-        </tr>
-        <tr>
-            <td>Earth</td>
-            <td>book</td>
-            <td>David</td>
-            <td>null</td>
-            <td>Cliffton</td>
-            <td>Newark</td>
-            <td>Yes</td>
-            <td><button type="button" class="btn btn-primary">View</button>
-                <button type="button" class="btn btn-primary">Cancel</button>
-            </td>
-        </tr>
-        <tr>
-            <td>Sun</td>
-            <td>book</td>
-            <td>David</td>
-            <td>null</td>
-            <td>Cliffton</td>
-            <td>Newark</td>
-            <td>Yes</td>
-            <td><button type="button" class="btn btn-primary">View</button>
-                <button type="button" class="btn btn-primary">Cancel</button>
-            </td>
-        </tr>
-    </table>
-    <div data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize"
-        data-boundary-links="true"></div>
 </div>
-
-<div class="container borrowed_table">
-    <div class="table_name">My Borrowed:</div>
-    <br />
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Type</th>
-            <th>Author</th>
-            <th>Editor</th>
-            <th>Branch Name</th>
-            <th>Branch Location</th>
-            <th>Availability</th>
-            <th>Actions</th>
-        </tr>
-        <tr>
-            <td>Space</td>
-            <td>book</td>
-            <td>David</td>
-            <td>null</td>
-            <td>Cliffton</td>
-            <td>Newark</td>
-            <td>Yes</td>
-            <td><button type="button" class="btn btn-primary">View</button></td>
-        </tr>
-        <tr>
-            <td>Earth</td>
-            <td>book</td>
-            <td>David</td>
-            <td>null</td>
-            <td>Cliffton</td>
-            <td>Newark</td>
-            <td>Yes</td>
-            <td><button type="button" class="btn btn-primary">View</button></td>
-        </tr>
-        <tr>
-            <td>Sun</td>
-            <td>book</td>
-            <td>David</td>
-            <td>null</td>
-            <td>Cliffton</td>
-            <td>Newark</td>
-            <td>Yes</td>
-            <td><button type="button" class="btn btn-primary">View</button></td>
-        </tr>
-    </table>
-    <div data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize"
-        data-boundary-links="true"></div>
-</div>
+<br>
+<br>
 {% endblock %}

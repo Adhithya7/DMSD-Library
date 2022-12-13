@@ -133,6 +133,7 @@ def document(id):
 
     elif request.method == "POST": # RESERVE DOC
         rid = request.args.get('rid')
+        available=request.args.get('available')
         #select a copy
         copy_query = f"""SELECT D.copyno, D.bid from ({available_query.format(rid=rid)}) AS D
                         WHERE docid={id} limit 1;"""
@@ -168,7 +169,7 @@ def document(id):
         except Exception as e:
             print(tb.format_exc())
             flash(f"Unexpected error while Borrowing book: {e}")
-        return ()
+        return redirect(request.url)
 
     elif request.method == "DELETE":  # RETURN DOC
         rid = request.args.get('rid')
@@ -184,7 +185,7 @@ def document(id):
         except Exception as e:
             print(tb.format_exc())
             flash(f"Unexpected error while Returning book: {e}")
-        return ()
+        return redirect(request.url)
 
 @reader.route("/document", methods=["GET"])
 def list_documents():
@@ -195,16 +196,18 @@ def list_documents():
                       JOIN BORROWING BI ON B.bor_no = BI.bor_no and B.rid = {rid} and BI.rdtime is not null"""
     return_query = f"""SELECT docid, bid, bdtime as tx_time, NULL as ret_time, 'BORROWED' as STATUS from BORROWS B
                        JOIN BORROWING BI ON B.bor_no = BI.bor_no and B.rid = {rid} and BI.rdtime is null"""
-    docs = f"""  SELECT sub1.docid, title, location as b_name, tx_time, ret_time, status from 
+    docs = f"""  SELECT sub1.docid as "Doc ID", title as "Title", location as "BranchLocation", tx_time as "Borrowed On", ret_time as "Returned On", status as "Status" from 
                 (({reserve_query}) UNION ({borrow_query}) UNION ({return_query})) as sub1
                 JOIN DOCUMENT D on sub1.docid = D.docid
                 JOIN BRANCH B ON sub1.bid = B.bid
                 """
                 
     cursor.execute(docs)
-    resp = cursor.fetchall()
-    print(resp)
-    return render_template("my_transactions.html", rows=resp, rid=rid)
+    rows = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    rows.insert(0, columns)
+    print(rows)
+    return render_template("my_transactions.html", rows=rows, rid=rid)
 
 
 @reader.route("/fines/<rid>", methods=["GET"])
