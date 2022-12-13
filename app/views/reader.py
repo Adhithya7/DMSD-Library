@@ -9,16 +9,18 @@ available_query = """
                 SELECT C.docid, C.copyno, C.bid from copy C
                 EXCEPT
                 ((SELECT C.docid, C.copyno, C.bid from copy C
-                JOIN borrows B
-                on C.docid=B.docid and C.bid= B.bid and C.copyno = B.copyno)
-                UNION
-                (SELECT C.docid, C.copyno, C.bid from copy C
                 JOIN reserves R
                 on C.docid=R.docid and C.bid= R.bid and C.copyno = R.copyno)
                 UNION
                 (SELECT C.docid, C.copyno, C.bid from copy C
                 JOIN (SELECT * from BORROWS BR
                 JOIN BORROWING BS on BR.rid = {rid} and BR.bor_no = BS.bor_no
+                and BS.rdtime is null) as B
+                on C.docid = B.docid)
+                UNION
+                (SELECT C.docid, C.copyno, C.bid from copy C
+                JOIN (SELECT * from BORROWS BR
+                JOIN BORROWING BS on BR.bor_no = BS.bor_no
                 and BS.rdtime is null) as B
                 on C.docid = B.docid)
                 UNION
