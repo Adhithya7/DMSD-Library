@@ -66,12 +66,11 @@
                 <td>{{r[2]}}</td>
                 <td>{{r[3].strftime('%Y-%m-%d')}}</td>
                 <td>{{r[5]}}</td>
-                <td style="display:flex;"><a href="{{url_for('reader.document', id=r[0], available=r[6], rid=request.args.get('rid'))}}"
+                <td style="display:flex;">
+                    <a href="{{url_for('reader.document', id=r[0], available=r[6], rid=request.args.get('rid'))}}"
                         class="btn btn-primary" style="margin-right: 10px;">View</a>
-                    <form action="{{url_for('reader.document', id=r[0], available=r[6], rid=request.args.get('rid'))}}">
-                        <input type="hidden" name="_METHOD" value="PUT" />
-                        <button type="submit" class="btn btn-primary">Return</button>
-                    </form>
+                    <a href="{{url_for('reader.return_document', id=r[0], available=r[6], rid=request.args.get('rid'))}}"
+                        class="btn btn-primary" style="margin-right: 10px;">Return</a>
                 </td>
             </tr>
             {% endif %}
