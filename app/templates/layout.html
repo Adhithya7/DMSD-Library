@@ -48,7 +48,7 @@
                     <a class="nav-link" href="{{url_for('reader.list_documents', rid=request.args.get('rid'))}}">My Transactions</a>
                 </li>
                 <li class="nav_item">
-                    <a class="nav-link" href="/admin">Admin</a>
+                    <a class="nav-link" href="{{url_for('admin.home_page', rid=request.args.get('rid'))}}">Admin</a>
                 </li>
                 <li class="nav_item">
                     <a class="nav-link" href="{{url_for('reader.contactus', rid=request.args.get('rid'))}}">Contact Us</a>

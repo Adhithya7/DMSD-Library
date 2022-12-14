@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{%block content%}
+<br>
+<div style="margin-left: 40px;">
+    <form method="GET" action="{{url_for('admin.most_borrowed', n_value=n_value)}}">
+        <div class="form-group">
+            <label style="font-size: 20px; color: white;" for="n">8. Get the N most borrowed books in the library.</label>
+            <br>
+            <input type="text" name="n_value" class="n-input" id="n" placeholder="Enter N">
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
