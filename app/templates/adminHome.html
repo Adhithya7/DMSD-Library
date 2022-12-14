@@ -1,12 +1,77 @@
 {% extends "layout.html" %}
 {%block content%}
+<br>
+<br>
+
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.api_2', docid=docid, title=title, pdate=pdate, pubname=pubname, address=address, )}}"
+    <form method="GET" action="{{url_for('admin.api_1')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
-        <label style="font-size: 20px; color: white;" for="bid">1. Add a document copy. </label>
+        <label style="font-size: 20px; color: white;" for="title">Add a document. </label>
         <div class="form-group" style="display: flex;">
-            <input type="number" name="docid" id="docid" placeholder="Enter DOCID">
-            <input type="number" name="copynum" id="copynum" placeholder="Enter Copy Number">
+            <input style="margin-left: 5px;" type="text" name="title" id="title" placeholder="Enter Title">
+            <input style="margin-left: 5px;" type="date" name="pdate" id="pdate" placeholder="Published On">
+            <input style="margin-left: 5px;" type="text" name="pubname" id="pubname" placeholder="Publisher Name">
+            <input style="margin-left: 5px;" type="text" name="address" id="address" placeholder="Publisher Address">
+            <input style="margin-left: 5px;" type="text" name="position" id="position" placeholder="Position">
+        </div>
+        <div>
+            <select type="text" name="doctype" id="doctype">
+                <option value="book" selected>Book</option>
+                <option value="journal">Journal</option>
+                <option value="proceeding">Conference Proceeding</option>
+            </select>
+        </div>
+        <div class="form-group" style="display: flexbox;">
+            <label style="font-size: 20px; color: white;" for="bid">Book:</label>
+            <input style="margin-left: 5px;" type="text" name="isbn" id="isbn" placeholder="Enter ISBN">
+            <input style="margin-left: 5px;" type="text" name="author" id="author" placeholder="Enter Author">
+        </div>
+        <div class="form-group" style="display:flexbox;">
+            <label style="font-size: 20px; color: white;" for="bid">Journal:</label>
+            <input style="margin-left: 5px;" type="text" name="volnum" id="volnum" placeholder="Volume Num">
+            <input style="margin-left: 5px;" type="text" name="meditor" id="meditor" placeholder="Main Editor">
+
+            <table id="myTable">
+                <tr>
+                    <td><input type="text" name="issuenum" id="issuenum" placeholder="Issue Num"></td>
+                    <td><input type="text" name="geditor" id="geditor" placeholder="Guest Editor"></td>
+                </tr>
+            </table>
+            <br>
+
+        </div>
+        <div class="form-group" style="display: flexbox;">
+            <label style="font-size: 20px; color: white;" for="bid">Proceeding:</label>
+            <input style="margin-left: 5px;" type="date" name="cdate" id="cdate" placeholder="Enter Date">
+            <input style="margin-left: 5px;" type="text" name="clocation" id="clocation" placeholder="Enter Location">
+            <input style="margin-left: 5px;" type="text" name="ceditor" id="ceditor" placeholder="Enter Editor">
+
+            <table id="myTable1">
+                <tr>
+                    <td><input type="text" name="chair" id="chair" placeholder="Enter Chair"></td>
+                </tr>
+            </table>
+            <br>
+
+        </div>
+        <div style="margin-left: auto; margin-right: auto;">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+    <button onclick="myCreateFunction()">Add Copy</button>
+    <button onclick="myDeleteFunction()">Delete Copy</button>
+    <button onclick="myCreateFunction1()">Add Chair</button>
+    <button onclick="myDeleteFunction1()">Delete Chair</button>
+</div>
+<br>
+<div style="margin-left: 40px;">
+    <form method="GET" action="{{url_for('admin.api_2')}}"
+        style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
+        <label style="font-size: 20px; color: white;" for="copynum">Add document copy. </label>
+        <div class="form-group" style="display: flex;">
+            <input style="margin-left: 5px;" type="number" name="docid" id="docid" placeholder="Enter DOCID">
+            <input style="margin-left: 5px;" type="number" name="bid" id="bid" placeholder="Enter Branch ID">
+            <input style="margin-left: 5px;" type="text" name="position" id="position" placeholder="Enter Position">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -15,12 +80,12 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.api_2', docid=docid, copynum=copynum)}}"
+    <form method="GET" action="{{url_for('admin.api_2')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
-        <label style="font-size: 20px; color: white;" for="bid">2. Search document copy and check its status. </label>
+        <label style="font-size: 20px; color: white;" for="docid">Search document copy and check its status. </label>
         <div class="form-group" style="display: flex;">
-            <input type="number" name="docid" id="docid" placeholder="Enter DOCID">
-            <input type="number" name="copynum" id="copynum" placeholder="Enter Copy Number">
+            <input style="margin-left: 5px;" type="number" name="docid" id="docid" placeholder="Enter DOCID">
+            <input style="margin-left: 5px;" type="number" name="copynum" id="copynum" placeholder="Enter Copy Number">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -29,15 +94,15 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="POST" action="{{url_for('admin.api_3', rtype=rtype, rname=rname, raddress=raddress, phno=phno)}}"
+    <form method="POST" action="{{url_for('admin.api_3')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
-        <label style="font-size: 20px; color: white;" for="bid">3. Add new reader.</label>
+        <label style="font-size: 20px; color: white;" for="rname">Add new reader.</label>
         <div class="form-group" style="display: flex;">
-            <input type="text" name="rname" id="rname" placeholder="Enter name">
+            <input style="margin-left: 5px;" type="text" name="rname" id="rname" placeholder="Enter name">
             <br>
-            <input type="text" name="raddress" id="raddress" placeholder="Enter Address">
+            <input style="margin-left: 5px;" type="text" name="raddress" id="raddress" placeholder="Enter Address">
             <br>
-            <input type="text" name="phno" id="phno" placeholder="Enter Phone">
+            <input style="margin-left: 5px;" type="text" name="phno" id="phno" placeholder="Enter Phone">
             <br>
             <select type="text" name="rtype" id="rtype" placeholder="Select:">
                 <option value="student" selected>Student</option>
@@ -52,12 +117,12 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.api_4', bid_value=bid_value)}}"
+    <form method="GET" action="{{url_for('admin.api_4')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
-        <label style="font-size: 20px; color: white;" for="bid">4. Print branch information (name and
+        <label style="font-size: 20px; color: white;" for="bid">Print branch information (name and
             location).</label>
         <div class="form-group" style="display: flex;">
-            <input type="number" name="bid_value" class="n-input" id="bid" placeholder="Enter BID">
+            <input style="margin-left: 5px;" type="number" name="bid_value" id="bid" placeholder="Enter BID">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -66,14 +131,14 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.api_5', n_value=n_value, i_value=i_value)}}"
+    <form method="GET" action="{{url_for('admin.api_5')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
-        <label style="font-size: 20px; color: white;" for="n">5. Get the top N most frequent borrowers in branch I
+        <label style="font-size: 20px; color: white;" for="n">Get the top N most frequent borrowers in branch I
             and borrowed books forn each.</label>
         <div class="form-group" style="display: flex;">
-            <input type="number" name="n_value" class="n-input" id="n" placeholder="Enter N">
+            <input style="margin-left: 5px;" type="number" name="n_value" class="n-input" id="n" placeholder="Enter N">
             <br>
-            <input type="number" name="i_value" class="i-input" id="i" placeholder="Enter I">
+            <input style="margin-left: 5px;" type="number" name="i_value" class="i-input" id="i" placeholder="Enter I">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -82,12 +147,12 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.freq_borrowers', n_value=n_value)}}"
+    <form method="GET" action="{{url_for('admin.freq_borrowers')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
-        <label style="font-size: 20px; color: white;" for="n">6. Get the top N most frequent borrowers in the
+        <label style="font-size: 20px; color: white;" for="n">Get the top N most frequent borrowers in the
             library and the number of books borrowed. </label>
         <div class="form-group" style="display: flex;">
-            <input type="number" name="n_value" class="n-input" id="n" placeholder="Enter N">
+            <input style="margin-left: 5px;" type="number" name="n_value" class="n-input" id="n" placeholder="Enter N">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -96,13 +161,13 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.most_borrowed_in_branch', n_value=n_value, i_value=i_value)}}"
+    <form method="GET" action="{{url_for('admin.most_borrowed_in_branch')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
-        <label style="font-size: 20px; color: white;" for="n">7. Get the N most borrowed books in branch I.</label>
+        <label style="font-size: 20px; color: white;" for="n">Get the N most borrowed books in branch I.</label>
         <div class="form-group" style="display: flex;">
-            <input type="number" name="n_value" class="n-input" id="n" placeholder="Enter N">
+            <input style="margin-left: 5px;" type="number" name="n_value" class="n-input" id="n" placeholder="Enter N">
             <br>
-            <input type="number" name="i_value" class="i-input" id="i" placeholder="Enter I">
+            <input style="margin-left: 5px;" type="number" name="i_value" class="i-input" id="i" placeholder="Enter I">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -111,12 +176,12 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.most_borrowed', n_value=n_value)}}"
+    <form method="GET" action="{{url_for('admin.most_borrowed')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
-        <label style="font-size: 20px; color: white;" for="n">8. Get the N most borrowed books in the
+        <label style="font-size: 20px; color: white;" for="n">Get the N most borrowed books in the
             library.</label>
         <div class="form-group" style="display: flex;">
-            <input type="text" name="n_value" class="n-input" id="n" placeholder="Enter N">
+            <input style="margin-left: 5px;" type="text" name="n_value" class="n-input" id="n" placeholder="Enter N">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -125,12 +190,12 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.most_popular', year_value=year_value)}}"
+    <form method="GET" action="{{url_for('admin.most_popular')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
-        <label style="font-size: 20px; color: white;" for="yr">9. Get the 10 most popular books of a year in the
+        <label style="font-size: 20px; color: white;" for="yr">Get the 10 most popular books of a year in the
             library.</label>
         <div class="form-group" style="display: flex;">
-            <input type="number" name="year_value" class="yr-input" id="yr" placeholder="Enter year">
+            <input style="margin-left: 5px;" type="number" name="year_value" class="yr-input" id="yr" placeholder="Enter year">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -139,18 +204,44 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.avg_fine', st_value=st_value, end_value=end_value)}}"
+    <form method="GET" action="{{url_for('admin.avg_fine')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
-        <label style="font-size: 20px; color: white;" for="st">10. Get average fine paid by the borrowers by branch
+        <label style="font-size: 20px; color: white;" for="st">Get average fine paid by the borrowers by branch
             in a time period.</label>
         <div class="form-group" style="display: flex;">
-            <input type="date" name="st_value" class="st-input" id="st" placeholder="Start Date">
+            <input style="margin-left: 5px;" type="date" name="st_value" class="st-input" id="st" placeholder="Start Date">
             <br>
-            <input type="date" name="end_value" class="end-input" id="end" placeholder="End Date">
+            <input style="margin-left: 5px;" type="date" name="end_value" class="end-input" id="end" placeholder="End Date">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </form>
 </div>
+<br>
+<br>
+<script>
+    function myCreateFunction() {
+        var table = document.getElementById("myTable");
+        var row = table.insertRow(0);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        cell1.innerHTML = '<td><input type="text" name="issuenum" id="issuenum" placeholder="Issue Num"></td>';
+        cell2.innerHTML = '<td><input type="text" name="geditor" id="geditor" placeholder="Guest Editor"></td>';
+    }
+
+    function myDeleteFunction() {
+        document.getElementById("myTable").deleteRow(0);
+    }
+
+    function myCreateFunction1() {
+        var table = document.getElementById("myTable1");
+        var row = table.insertRow(0);
+        var cell1 = row.insertCell(0);
+        cell1.innerHTML = '<td><input type="text" name="chair" id="chair" placeholder="Enter Chair"></td>';}
+
+    function myDeleteFunction1() {
+        document.getElementById("myTable1").deleteRow(0);
+    }
+</script>
 {% endblock %}
