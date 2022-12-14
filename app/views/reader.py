@@ -283,7 +283,7 @@ def list_documents():
                 JOIN DOCUMENT D on sub1.docid = D.docid
                 JOIN BRANCH B ON sub1.bid = B.bid
                 """
-
+    print(docs)
     cursor.execute(docs)
     rows = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
