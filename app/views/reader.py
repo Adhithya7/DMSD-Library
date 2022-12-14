@@ -1,4 +1,5 @@
 import traceback as tb
+from datetime import datetime, timedelta, date
 from flask import Blueprint, render_template, request, flash, redirect, url_for, make_response
 from utils import connection, cursor
 
@@ -136,6 +137,17 @@ def document(id):
         cursor.execute(final_query)
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
+        if request.args.get("fines") and request.args.get("rid"):
+            fine_query = f"""SELECT BS.bdtime from BORROWS BR
+                JOIN BORROWING BS on BR.rid = {request.args.get("rid")} and BR.bor_no = BS.bor_no
+                and BS.rdtime is null and BR.docid={id}"""
+            cursor.execute(fine_query)
+            borrowed_dt = cursor.fetchall()
+            if borrowed_dt:
+                return_dt = borrowed_dt[0][0].date() + timedelta(days=20)
+                fine = max(0, (date.today() - return_dt).days) * 0.2 
+            columns.append("fine")
+            rows = [list(row)+["%.2f" %fine] for row in rows]
         rows.insert(0, columns)
         print(rows)
         return render_template("resource.html", rows=rows, doc_type=doc_type, available=available)
