@@ -12,8 +12,8 @@ def is_valid_username(username):
         raise ValidationError("Invalid username format")
 
 class AuthForm(FlaskForm):
-    username = StringField("username", validators=[DataRequired(), Length(2, 30)])
-    password = PasswordField("password", validators=[DataRequired(), Length(8)])
+    username = StringField("Username", validators=[DataRequired(), Length(2, 30)])
+    password = PasswordField("Password", validators=[DataRequired(), Length(8)])
     def validate_username(form, field):
         print("checking ", field.data)
         is_valid_username(field.data)

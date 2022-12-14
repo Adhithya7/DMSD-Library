@@ -1,5 +1,5 @@
 {% macro render_field(field) %}
-<div class="form-group mb-3">
+<div class="form-group mb-3" style="font-size: 20px; color: white;">
     {{ field.label(class="form-label") }}
     {{ field(class="form-control",**kwargs)|safe }}
     {% if field.errors %}
