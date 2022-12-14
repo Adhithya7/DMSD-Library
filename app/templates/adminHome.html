@@ -1,12 +1,98 @@
 {% extends "layout.html" %}
 {%block content%}
+<div style="margin-left: 40px;">
+    <form method="GET" action="{{url_for('admin.api_4', bid_value=bid_value)}}" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
+        <div class="form-group">
+            <label style="font-size: 20px; color: white;" for="bid">4. Print branch information (name and location).</label>
+            <br>
+            <input type="number" name="bid_value" class="n-input" id="bid" placeholder="Enter BID">
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.most_borrowed', n_value=n_value)}}">
+    <form method="GET" action="{{url_for('admin.api_5', n_value=n_value, i_value=i_value)}}" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
+        <div class="form-group">
+            <label style="font-size: 20px; color: white;" for="n">5. Get the top N most frequent borrowers in branch I and borrowed books forn each.</label>
+            <br>
+            <input type="number" name="n_value" class="n-input" id="n" placeholder="Enter N">
+            <br>
+            <br>
+            <input type="number" name="i_value" class="i-input" id="i" placeholder="Enter I">
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+<br>
+<div style="margin-left: 40px;">
+    <form method="GET" action="{{url_for('admin.freq_borrowers', n_value=n_value)}}" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
+        <div class="form-group">
+            <label style="font-size: 20px; color: white;" for="n">6. Get the top N most frequent borrowers in the library and the number of books borrowed. </label>
+            <br>
+            <input type="number" name="n_value" class="n-input" id="n" placeholder="Enter N">
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+<br>
+<div style="margin-left: 40px;">
+    <form method="GET" action="{{url_for('admin.most_borrowed_in_branch', n_value=n_value, i_value=i_value)}}" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
+        <div class="form-group">
+            <label style="font-size: 20px; color: white;" for="n">7. Get the N most borrowed books in branch I.</label>
+            <br>
+            <input type="number" name="n_value" class="n-input" id="n" placeholder="Enter N">
+            <br>
+            <br>
+            <input type="number" name="i_value" class="i-input" id="i" placeholder="Enter I">
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+<br>
+<div style="margin-left: 40px;">
+    <form method="GET" action="{{url_for('admin.most_borrowed', n_value=n_value)}}" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
         <div class="form-group">
             <label style="font-size: 20px; color: white;" for="n">8. Get the N most borrowed books in the library.</label>
             <br>
             <input type="text" name="n_value" class="n-input" id="n" placeholder="Enter N">
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+<br>
+<div style="margin-left: 40px;">
+    <form method="GET" action="{{url_for('admin.most_popular', year_value=year_value)}}" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
+        <div class="form-group">
+            <label style="font-size: 20px; color: white;" for="yr">9. Get the 10 most popular books of a year in the library.</label>
+            <br>
+            <input type="number" name="year_value" class="yr-input" id="yr" placeholder="Enter year">
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+<br>
+<div style="margin-left: 40px;">
+    <form method="GET" action="{{url_for('admin.avg_fine', st_value=st_value, end_value=end_value)}}" style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
+        <div class="form-group">
+            <label style="font-size: 20px; color: white;" for="st">10. Get average fine paid by the borrowers by branch in a time period.</label>
+            <br>
+            <input type="date" name="st_value" class="st-input" id="st" placeholder="Start Date">
+            <br>
+            <br>
+            <input type="date" name="end_value" class="end-input" id="end" placeholder="End Date">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
