@@ -69,7 +69,7 @@ def search():
     if request.args.get("publisher_name"):
         all_docs_query += f" and P.pubname ilike '%{request.args.get('publisher_name')}%'"
     if request.args.get("available"):
-        all_docs_query += f"and D.docid in (SELECT sub.docid from ({available_query.format(rid=rid)}) AS sub)"
+        all_docs_query += f" and D.docid in (SELECT sub.docid from ({available_query.format(rid=rid)}) AS sub)"
     ql = int(request.args.get('limit', 10))
     if ql < 1 or ql > 100:
         all_docs_query += f" LIMIT 10"
@@ -205,10 +205,48 @@ def return_document(id):
     try:
         cursor.execute(return_query)
         connection.commit()
-        # flash("Returned Book", "success")
+        flash("Returned Book", "success")
     except Exception as e:
         print(tb.format_exc())
         flash(f"Unexpected error while Returning book: {e}")
+        
+    #Loading my transactions page again
+    reserve_query = f"""SELECT docid, bid, dtime as tx_time, NULL as ret_time, 'RESERVED' as status  from RESERVES R
+                        JOIN RESERVATION RI ON R.reservation_no = RI.res_no and R.rid = {rid}"""
+    borrow_query = f"""SELECT docid, bid, bdtime as tx_time, rdtime as ret_time, 'RETURNED' as STATUS from BORROWS B
+                      JOIN BORROWING BI ON B.bor_no = BI.bor_no and B.rid = {rid} and BI.rdtime is not null"""
+    return_query = f"""SELECT docid, bid, bdtime as tx_time, NULL as ret_time, 'BORROWED' as STATUS from BORROWS B
+                       JOIN BORROWING BI ON B.bor_no = BI.bor_no and B.rid = {rid} and BI.rdtime is null"""
+    docs = f"""  SELECT sub1.docid as "Doc ID", title as "Title", location as "BranchLocation", tx_time as "Borrowed On", ret_time as "Returned On", status as "Status" from 
+                (({reserve_query}) UNION ({borrow_query}) UNION ({return_query})) as sub1
+                JOIN DOCUMENT D on sub1.docid = D.docid
+                JOIN BRANCH B ON sub1.bid = B.bid
+                """
+
+    cursor.execute(docs)
+    rows = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    rows.insert(0, columns)
+    print(rows)
+    return render_template("my_transactions.html", rows=rows, rid=rid)
+
+
+@reader.route("/borrow_document/<id>", methods=["GET"])
+def borrow_document(id):
+    rid = request.args.get('rid')
+    copy_query = f"""SELECT copyno, bid from reserves
+                    WHERE docid = {id} and rid = {rid};"""
+    cursor.execute(copy_query)
+    copy = cursor.fetchall()
+    borrow_query = f"""INSERT INTO BORROWS (RID, DOCID, COPYNO, BID) VALUES
+                    ({rid}, {id}, {copy[0][0]}, {copy[0][1]});"""
+    try:
+        cursor.execute(borrow_query)
+        connection.commit()
+        flash("Borrowed Book", "success")
+    except Exception as e:
+        print(tb.format_exc())
+        flash(f"Unexpected error while Borrowing book: {e}")
         
     #Loading my transactions page again
     reserve_query = f"""SELECT docid, bid, dtime as tx_time, NULL as ret_time, 'RESERVED' as status  from RESERVES R
@@ -254,8 +292,6 @@ def list_documents():
     return render_template("my_transactions.html", rows=rows, rid=rid)
 
 
-@reader.route("/fines/<rid>", methods=["GET"])
-def fine(rid):
-    docid = request.args.get('docid')
-    all_docs_query = docs_query
-    reader_docs_query = f"""SELECT docid from """
+@reader.route("/contactus", methods=["GET"])
+def contactus():
+    return render_template('contact.html')

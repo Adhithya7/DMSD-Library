@@ -1,5 +1,4 @@
 {% extends "secure_layout.html" %}
-{% include 'flash.html' %}
 {%block content%}
 <div style="text-align: center;">
     <form method="GET" action="{{url_for('reader.validate', rid=rid)}}">

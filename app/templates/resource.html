@@ -1,5 +1,4 @@
 {% extends "layout.html" %}
-{% include 'flash.html' %}
 {%block content%}
 <div class="container">
     {% if doc_type== "book" %}
@@ -7,8 +6,7 @@
         <div class="card-body">
             <h5 class="card-title">{{ rows[1][1] }}</h5>
             <br>
-            <h6 class="card-subtitle mb-2">Book</h6>
-            <br>
+            <h6 class="card-subtitle mb-2">Document Type: Book</h6>
             <span class="label label-default">ISBN: {{ rows[1][6] }}</span>
             <br>
             <span class="label label-default">Author: {{ rows[1][7] }}</span>
@@ -20,7 +18,12 @@
             <span class="label label-default">Address: {{ rows[1][5] }}</span>
             <br>
             <br>
-            {% if available == 'True' %}
+            {% if request.args.get('fines') %}
+            <span class="label label-default">Fine: ${{ rows[1][8] }}</span>
+            <br>
+            <br>
+            {% endif %}
+            {% if request.args.get('res_button') == 'True' %}
             <form action="{{url_for('reader.document', id=rows[1][0], **request.args)}}"
                 method="POST">
                 <button type="submit" class="btn btn-primary">Reserve</button>
@@ -34,8 +37,7 @@
         <div class="card-body">
             <h5 class="card-title">{{ rows[1][1] }}</h5>
             <br>
-            <h6 class="card-subtitle mb-2">Journal Volume</h6>
-            <br>
+            <h6 class="card-subtitle mb-2">Document Type: Journal Volume</h6>
             <span class="label label-default">Published on: {{ rows[1][2].strftime('%Y-%m-%d') }}</span>
             <br>
             <span class="label label-default">Publisher: {{ rows[1][4] }}</span>
@@ -55,6 +57,11 @@
             <span class="label label-default">Scope: {{ rows[1][8] }}</span>
             <br>
             <br>
+            {% if request.args.get('fines') %}
+            <span class="label label-default">Fine: ${{ rows[1][8] }}</span>
+            <br>
+            <br>
+            {% endif %}
             {% if available == 'True' %}
             <form action="{{url_for('reader.document', id=rows[1][0], **request.args)}}"
                 method="POST">
@@ -69,8 +76,7 @@
         <div class="card-body">
             <h5 class="card-title">{{ rows[1][1] }}</h5>
             <br>
-            <h6 class="card-subtitle mb-2">Conference Proceeding</h6>
-            <br>
+            <h6 class="card-subtitle mb-2">Document Type: Conference Proceeding</h6>
             <span class="label label-default">Published on: {{ rows[1][2].strftime('%Y-%m-%d') }}</span>
             <br>
             <span class="label label-default">Publisher: {{ rows[1][4] }}</span>
@@ -91,11 +97,10 @@
             {% endfor %}
             <br>
             <br>
-            {% if available == 'True' %}
-            <form action="{{url_for('reader.document', id=rows[1][0], **request.args)}}"
-                method="POST">
-                <button type="submit" class="btn btn-primary">Reserve</button>
-            </form>
+            {% if request.args.get('fines') %}
+            <span class="label label-default">Fine: ${{ rows[1][8] }}</span>
+            <br>
+            <br>
             {% endif %}
         </div>
     </div>

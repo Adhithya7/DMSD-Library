@@ -35,7 +35,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-
+{% include 'flash.html' %}
 <body class="header">
     <nav class="navbar navbar-expand-md">
         <h1 class="title_library">43 2nd Ave Library</h1>
@@ -51,7 +51,7 @@
                     <a class="nav-link" href="/admin">Admin</a>
                 </li>
                 <li class="nav_item">
-                    <a class="nav-link" href="/contact">Contact Us</a>
+                    <a class="nav-link" href="{{url_for('reader.contactus', rid=request.args.get('rid'))}}">Contact Us</a>
                 </li>
             </ul>
         </div>
