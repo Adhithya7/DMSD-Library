@@ -22,7 +22,7 @@ available_query = """
                 JOIN (SELECT * from BORROWS BR
                 JOIN BORROWING BS on BR.bor_no = BS.bor_no
                 and BS.rdtime is null) as B
-                on C.docid = B.docid)
+                on C.docid = B.docid and C.copyno = B.copyno)
                 UNION
                 (SELECT C.docid, C.copyno, C.bid from copy C
                 JOIN (SELECT * from RESERVES where rid = {rid}) as B
