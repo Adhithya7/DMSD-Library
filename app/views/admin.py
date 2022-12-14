@@ -62,3 +62,21 @@ def api_4():
     bid_value = request.args.get('bid_value')
     print(bid_value)
     return render_template('contact.html')
+
+@admin.route("/api_3", methods=["POST"]) # Add new reader. 
+def api_3():
+    bid_value = request.args.get('bid_value')
+    print(bid_value)
+    return render_template('contact.html')
+
+@admin.route("/api_2", methods=["GET"]) # Search document copy and check its status.  
+def api_2():
+    bid_value = request.args.get('bid_value')
+    print(bid_value)
+    return render_template('contact.html')
+
+@admin.route("/api_1", methods=["GET"]) # Add a document copy.   
+def api_1():
+    bid_value = request.args.get('bid_value')
+    print(bid_value)
+    return render_template('contact.html')
