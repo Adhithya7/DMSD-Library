@@ -54,7 +54,7 @@ def logout():
     flash("Successfully logged out", "success")
     return redirect(url_for("auth.login"))
 
-@auth.route("/landing-page", methods=["GET","POST"])
+@auth.route("/admin_home", methods=["GET","POST"])
 @login_required
 def landing_page():
     return render_template("adminHome.html")

@@ -4,10 +4,9 @@ from typing import Optional
 
 from pydantic.types import conint
 
-class createBook(BaseModel):
+class createDoc(BaseModel):
     docID: int
     ISBN: int
 
-class updateBook(BaseModel):
-    docID: int
-    ISBN: int
+class createCopy(BaseModel):
+    
