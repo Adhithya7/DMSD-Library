@@ -34,7 +34,7 @@ for order, q in enumerate(queries):
             print(f"Table {t} already exists, blocking query")
             continue
     try:
-        if "copy" in sql:
+        if "CSV" in sql:
             elem = sql.split(" ")
             with open(elem[3].replace("'","")) as f:
                 cursor.copy_expert(f'COPY {elem[1]} FROM STDIN WITH HEADER CSV', f)

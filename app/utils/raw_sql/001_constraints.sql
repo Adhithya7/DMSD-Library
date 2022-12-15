@@ -1,16 +1,3 @@
--- CREATE OR REPLACE FUNCTION abort_insert()
--- RETURNS trigger LANGUAGE plpgsql as $$
--- BEGIN
--- RETURN null;
--- END $$;
-
-CREATE OR REPLACE FUNCTION ins_reserve()
-RETURNS trigger LANGUAGE plpgsql as $$
-BEGIN
-INSERT INTO RESERVATION DEFAULT VALUES;
-RETURN null;
-END $$;
-
 CREATE OR REPLACE FUNCTION ins_borrow()
 RETURNS trigger LANGUAGE plpgsql as $$
 BEGIN
@@ -28,20 +15,33 @@ ON I.DOCID = RESERVES.DOCID and I.COPYNO = RESERVES.COPYNO and I.BID = RESERVES.
 RETURN null;
 END $$;
 
--- CREATE TRIGGER TOTAL_BOOKS_BORROWED
--- BEFORE INSERT ON RESERVES
--- FOR EACH STATEMENT
--- WHEN (10 >= ALL(SELECT COUNT(*)
---                 FROM (SELECT BOR_NO as txn, RID FROM BORROWS WHERE RDTIME is null
---                       UNION ALL
---                       SELECT RESERVATION_NO as txn, RID from RESERVES) AS C
---                 GROUP BY RID))
--- EXECUTE PROCEDURE abort_insert();
+CREATE OR REPLACE FUNCTION abortOrInsert()
+RETURNS trigger LANGUAGE plpgsql as $$
+BEGIN
+IF 10<= (SELECT count(*) from 
+((SELECT BR.docid as docid, BR.copyno as copyno from BORROWS BR
+JOIN BORROWING BS on BR.bor_no = BS.bor_no
+and BS.rdtime is null and BR.rid = new.rid)
+UNION ALL
+(SELECT docid, copyno from RESERVES where rid = new.rid)) as tab2)
+THEN RAISE EXCEPTION 'Reader has 10 active transactions already';
+ELSEIF EXISTS (SELECT tab2.DOCID from 
+((SELECT BR.DOCID from BORROWS BR
+JOIN BORROWING BS on BR.bor_no = BS.bor_no
+and BS.rdtime is null and BR.rid = new.rid and BR.docid = new.docid)
+UNION
+(SELECT docid from RESERVES where rid = new.rid and docid = new.docid)) as tab2)
+THEN RAISE EXCEPTION 'Reader has reserved/borrowed a book with the same docid already';
+ELSE
+INSERT INTO RESERVATION DEFAULT VALUES;
+END IF;
+RETURN new;
+END $$;
 
-CREATE TRIGGER RESERVATION
+CREATE TRIGGER TOTAL_BOOKS_BORROWED
 BEFORE INSERT ON RESERVES
 FOR EACH STATEMENT
-EXECUTE PROCEDURE ins_reserve();
+EXECUTE PROCEDURE abortOrInsert();
 
 CREATE TRIGGER BORROWS
 BEFORE INSERT ON BORROWS

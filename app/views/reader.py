@@ -75,7 +75,15 @@ def search():
         all_docs_query += f" LIMIT 10"
     else:
         all_docs_query += f" LIMIT {ql}"
-    cursor.execute(all_docs_query)
+    try:
+        cursor.execute(all_docs_query)
+    except Exception as e:
+        rows = []
+        flash(f"Unexpected error while Borrowing book: {e}")
+        print(tb.format_exc())
+        connection.rollback()
+        return render_template("explore.html", rows=rows, rid=rid)
+
     columns = [desc[0] for desc in cursor.description]
     all_docs = cursor.fetchall()
     rows = []
@@ -138,14 +146,11 @@ def document(id):
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         if request.args.get("fines") and request.args.get("rid"):
-            fine_query = f"""SELECT BS.bdtime from BORROWS BR
+            fine_query = f"""SELECT GREATEST(0, (date_part('day', BR.rdtime) - date_part('day', BR.bdtime) - 20))*0.20 as fine from BORROWS BR
                 JOIN BORROWING BS on BR.rid = {request.args.get("rid")} and BR.bor_no = BS.bor_no
                 and BS.rdtime is null and BR.docid={id}"""
             cursor.execute(fine_query)
-            borrowed_dt = cursor.fetchall()
-            if borrowed_dt:
-                return_dt = borrowed_dt[0][0].date() + timedelta(days=20)
-                fine = max(0, (date.today() - return_dt).days) * 0.2 
+            fine = cursor.fetchall()
             columns.append("fine")
             rows = [list(row)+["%.2f" %fine] for row in rows]
         rows.insert(0, columns)
@@ -173,6 +178,7 @@ def document(id):
             flash("Reserved Book", "success")
         except Exception as e:
             print(tb.format_exc())
+            connection.rollback()
             flash(f"Unexpected error while reserving book: {e}")
         return redirect(request.url)
 
@@ -190,6 +196,7 @@ def document(id):
             flash("Borrowed Book", "success")
         except Exception as e:
             print(tb.format_exc())
+            connection.rollback()
             flash(f"Unexpected error while Borrowing book: {e}")
         return redirect(request.url)
 
@@ -208,6 +215,7 @@ def return_document(id):
         flash("Returned Book", "success")
     except Exception as e:
         print(tb.format_exc())
+        connection.rollback()
         flash(f"Unexpected error while Returning book: {e}")
         
     #Loading my transactions page again
@@ -222,8 +230,14 @@ def return_document(id):
                 JOIN DOCUMENT D on sub1.docid = D.docid
                 JOIN BRANCH B ON sub1.bid = B.bid
                 """
+    try:
+        cursor.execute(docs)
+    except Exception as e:
+        rows=[]
+        connection.rollback()
+        flash(f"Unexpected error while Returning book: {e}")
+        return render_template("my_transactions.html", rows=rows, rid=rid)
 
-    cursor.execute(docs)
     rows = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
     rows.insert(0, columns)
@@ -245,6 +259,7 @@ def borrow_document(id):
         connection.commit()
         flash("Borrowed Book", "success")
     except Exception as e:
+        connection.rollback()
         print(tb.format_exc())
         flash(f"Unexpected error while Borrowing book: {e}")
         
@@ -260,8 +275,13 @@ def borrow_document(id):
                 JOIN DOCUMENT D on sub1.docid = D.docid
                 JOIN BRANCH B ON sub1.bid = B.bid
                 """
-
-    cursor.execute(docs)
+    try:
+        cursor.execute(docs)
+    except Exception as e:
+        rows=[]
+        connection.rollback()
+        flash(f"Unexpected error while Returning book: {e}")
+        return render_template("my_transactions.html", rows=rows, rid=rid)
     rows = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
     rows.insert(0, columns)
@@ -283,8 +303,13 @@ def list_documents():
                 JOIN DOCUMENT D on sub1.docid = D.docid
                 JOIN BRANCH B ON sub1.bid = B.bid
                 """
-
-    cursor.execute(docs)
+    try:
+        cursor.execute(docs)
+    except Exception as e:
+        rows=[]
+        connection.rollback()
+        flash(f"Unexpected error while fetching transaction: {e}")
+        return render_template("my_transactions.html", rows=rows, rid=rid)
     rows = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
     rows.insert(0, columns)
