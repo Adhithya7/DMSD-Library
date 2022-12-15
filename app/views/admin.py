@@ -192,80 +192,195 @@ def branch():
 #@login_required
 def reader():
     form_data = {}
-    form_data['rtype'] = request.form.get('rtype')
-    form_data['rname'] = request.form.get('rname')
-    form_data['raddress'] = request.form.get('raddress')
-    form_data['phone_no'] = request.form.get('phone_no')
     fields = ["rtype", "rname", "raddress", "phone_no"]
     for field in fields:
         if not request.form.get(field):
             flash(f"{field} is a mandatory field", "danger")
             return render_template('adminHome.html')
         form_data[field] = request.form.get(field)
-    print(form_data)
     try:
         query= f"""INSERT INTO READER({','.join(fields)}) VALUES
                         ('{form_data['rtype']}', '{form_data['rname']}', 
-                         '{form_data['raddress']}','{form_data['phone_no']}');"""
+                         '{form_data['raddress']}','{form_data['phone_no']}') RETURNING rid;"""
                          
         print(query)
         cursor.execute(query)
-        flash("Added New Reader", "success")
+        connection.commit()
+        flash(f"Added New Reader, Reader id: {cursor.fetchall()[0][0]}", "success")
     except Exception as e:
         print(tb.format_exc)
         connection.rollback()
         flash(f"Unexpected error while trying to add reader: {e}", "danger")
     return render_template('adminHome.html')
 
-@admin.route("/search", methods=["GET"]) # Search document copy and check its status.  
+@admin.route("/document", methods=["GET", "POST"]) # Search document copy and check its status.  
 #@login_required
-def search():
-    docid = request.args.get('docid')
-    copyno = request.args.get('copynum')
-    reserve_query = f"""SELECT docid, copyno, bid, dtime as tx_time, NULL as ret_time, 'RESERVED' as status  from RESERVES R
-                        JOIN RESERVATION RI ON R.reservation_no = RI.res_no and R.docid = {docid} and R.copyno = {copyno}"""
-    borrow_query = f"""SELECT docid, copyno, bid, bdtime as tx_time, rdtime as ret_time, 'BORROWED' as STATUS from BORROWS B
-                      JOIN BORROWING BI ON B.bor_no = BI.bor_no and B.docid = {docid} and B.copyno = {copyno} and BI.rdtime is null"""
-    docs = f"""  SELECT sub1.docid as "Doc ID", sub1.copyno as "COPY_NO", title as "Title",
-                 location as "BranchLocation", tx_time as "Borrowed On", ret_time as "Returned On",
-                 status from 
-                (({reserve_query}) UNION ({borrow_query})) as sub1
-                JOIN DOCUMENT D on D.docid={docid}
-                JOIN BRANCH B ON sub1.bid = B.bid
-                """
-    try:
-        cursor.execute(docs)
-        rows = cursor.fetchall()
-        if not rows:
-            cursor.execute(f"""SELECT title as DOC_TITLE, copyno as COPY_NO, B.lname, NULL as tx_time,
-                            NULL as ret_time, 'AVAILABLE' as status from 
-                           (SELECT docid, copyno, BR.bid from COPY C
-                           JOIN BRANCH BR
-                           on BR.bid = C.bid and C.docid = {docid} and C.copyno={copyno}) as sub
-                           JOIN BRANCH B ON sub.bid = B.bid
-                           JOIN DOCUMENT D on D.docid = {docid}
-                           """)
+def document():
+    if request.method == "GET":
+        docid = request.args.get('docid')
+        copyno = request.args.get('copynum')
+        reserve_query = f"""SELECT docid, copyno, bid, dtime as tx_time, NULL as ret_time, 'RESERVED' as status  from RESERVES R
+                            JOIN RESERVATION RI ON R.reservation_no = RI.res_no and R.docid = {docid} and R.copyno = {copyno}"""
+        borrow_query = f"""SELECT docid, copyno, bid, bdtime as tx_time, rdtime as ret_time, 'BORROWED' as STATUS from BORROWS B
+                          JOIN BORROWING BI ON B.bor_no = BI.bor_no and B.docid = {docid} and B.copyno = {copyno} and BI.rdtime is null"""
+        docs = f"""  SELECT sub1.docid as "Doc ID", sub1.copyno as "COPY_NO", title as "Title",
+                     location as "BranchLocation", tx_time as "Borrowed On", ret_time as "Returned On",
+                     status from 
+                    (({reserve_query}) UNION ({borrow_query})) as sub1
+                    JOIN DOCUMENT D on D.docid={docid}
+                    JOIN BRANCH B ON sub1.bid = B.bid
+                    """
+        try:
+            cursor.execute(docs)
             rows = cursor.fetchall()
+            if not rows:
+                cursor.execute(f"""SELECT title as DOC_TITLE, copyno as COPY_NO, B.lname, NULL as tx_time,
+                                NULL as ret_time, 'AVAILABLE' as status from 
+                               (SELECT docid, copyno, BR.bid from COPY C
+                               JOIN BRANCH BR
+                               on BR.bid = C.bid and C.docid = {docid} and C.copyno={copyno}) as sub
+                               JOIN BRANCH B ON sub.bid = B.bid
+                               JOIN DOCUMENT D on D.docid = {docid}
+                               """)
+                rows = cursor.fetchall()
+        except Exception as e:
+            rows=[]
+            connection.rollback()
+            flash(f"Unexpected error while fetching status: {e}")
+            return render_template("adminResults.html", rows=rows)
+        columns = [desc[0] for desc in cursor.description]
+        rows.insert(0, columns)
+        print(rows)
+        return render_template('adminResults.html', rows=rows)
+
+    if request.method == "POST":
+        form_data = {}
+        fields = ["title", "pdate", "pubid", "bid", "position"]
+        for field in fields:
+            if not request.form.get(field):
+                flash(f"{field} is a mandatory field", "danger")
+                return render_template('adminHome.html')
+            form_data[field] = request.form.get(field)
+        fields.remove('bid')
+        fields.remove('position')
+        query= f"""INSERT INTO DOCUMENT({','.join(fields)}) VALUES
+                        ('{form_data['title']}', '{form_data['pdate']}', 
+                         '{form_data['pubid']}') RETURNING docid;"""     
+        try:
+            cursor.execute(query)
+            connection.commit()
+            docid = cursor.fetchall()[0][0]
+        except Exception as e:
+            print(tb.format_exc)
+            connection.rollback()
+            flash(f"Unexpected error while trying to add document: {e}", "danger")
+            return render_template('adminHome.html')
+        doctype = request.form.get("doctype")
+
+        try:
+            if doctype == "book":
+                form_data = {}
+                fields = ["author", "isbn"]
+                for field in fields:
+                    if not request.form.get(field):
+                        flash(f"{field} is a mandatory field", "danger")
+                        return render_template('adminHome.html')
+                    form_data[field] = request.form.get(field)
+                query1 = f"""Insert into BOOK(docid, isbn) VALUES
+                            ('{docid}', '{form_data['isbn']}')"""
+                query2 = f"""Insert into AUTHORS(pid, docid) VALUES
+                            ('{docid}', '{form_data['author']}')"""
+                cursor.execute(query1)
+                cursor.execute(query2)
+                connection.commit()
+
+            elif doctype == "journal":
+                form_data = {}
+                fields = ["volnum", "meditor", "issuenum", "geditors", "scope"]
+                for field in fields:
+                    if not request.form.get(field):
+                        flash(f"{field} is a mandatory field", "danger")
+                        return render_template('adminHome.html')
+                    form_data[field] = request.form.get(field)
+                query1 = f"""Insert into JOURNAL_VOLUME(VOLUME_NO, EDITOR) VALUES
+                            ('{form_data['volnum']}', '{form_data['meditor']}')"""
+                cursor.execute(query1)
+                geditors = form_data["geditors"].split('$')
+                for i in range(1, (int(form_data['issuenum']) + 1)):
+                    query2 = f"""Insert into journal_issues(docid, issue_no, scope) VALUES
+                            ('{docid}', '{i}', '{form_data['scope']}')"""
+                    cursor.execute(query2)
+                    sub_geditors = geditors[i-1].split(',')
+                    for sub_geditor in sub_geditors:
+                        query3 = f"""Insert into gedits(docid, issue_no, pid) VALUES
+                                ('{docid}', '{i}', '{sub_geditor}')"""
+                        cursor.execute(query2)
+                connection.commit()
+
+            elif doctype == "proceeding":
+                form_data = {}
+                fields = ["cdate", "clocation", "ceditor", "numchair", "chairs"]
+                for field in fields:
+                    if not request.form.get(field):
+                        flash(f"{field} is a mandatory field", "danger")
+                        return render_template('adminHome.html')
+                    form_data[field] = request.form.get(field)
+                query1 = f"""Insert into PROCEEDINGS(docid, cdate, clocation, ceditor) VALUES
+                            ('{docid}', '{form_data['cdate']}', '{form_data['clocation']}'
+                             '{form_data['ceditor']}')"""
+                cursor.execute(query1)
+                chairs = form_data["chairs"].split(',')
+                for i in range(1, (int(form_data['numchair']) + 1)):
+                    query2 = f"""Insert into chairs(docid, pid) VALUES
+                            ('{docid}', '{chairs[i-1]}')"""
+                    cursor.execute(query2)
+                connection.commit()
+                
+            flash(f"Added New Document, Document id: {docid}", "success")
+        except:
+            query = f"DELETE FROM document where docid = {docid}"
+            try:
+                cursor.execute(query)
+                connection.commit()
+            except Exception as e:
+                print(tb.format_exc)
+                connection.rollback()
+            flash(f"Unexpected error while trying to rollback: {e}", "danger")
+            return render_template('adminHome.html')
+
+        return render_template('adminHome.html')
+
+@admin.route("/document_copy", methods=["POST"]) # Add a document copy.   
+#@login_required
+def add_copy():
+    form_data = {}
+    fields = ["docid", "bid", "position"]
+    for field in fields:
+        if not request.form.get(field):
+            flash(f"{field} is a mandatory field", "danger")
+            return render_template('adminHome.html')
+        form_data[field] = request.form.get(field)
+    fetch_last_copy = f"""SELECT max(copyno) from copy where docid={form_data['docid']}
+                         and bid = {form_data['bid']}"""
+    try:
+        cursor.execute(fetch_last_copy)
     except Exception as e:
-        rows=[]
         connection.rollback()
-        flash(f"Unexpected error while fetching status: {e}")
-        return render_template("adminResults.html", rows=rows)
-    columns = [desc[0] for desc in cursor.description]
-    rows.insert(0, columns)
-    print(rows)
-    return render_template('adminResults.html', rows=rows)
-
-@admin.route("/api_1", methods=["POST"]) # Add a document copy.   
-#@login_required
-def api_1():
-    bid_value = request.args.get('bid_value')
-    print(bid_value)
-    return render_template('adminResults.html')
-
-@admin.route("/api_2", methods=["POST"]) # Add a document copy.   
-#@login_required
-def api_2():
-    bid_value = request.args.get('bid_value')
-    print(bid_value)
-    return render_template('adminResults.html')
+        flash(f"Unexpected error while fetching copy_no: {e}")
+        return render_template('adminHome.html')
+    copy_no = cursor.fetchall()
+    copy_no = int(copy_no[0][0]) + 1 if copy_no else 1
+    fields.append('copyno')
+    query= f"""INSERT INTO COPY({','.join(fields)}) VALUES
+                        ('{form_data['docid']}', '{form_data['bid']}', 
+                         '{form_data['position']}',{copy_no});"""     
+    try:
+        cursor.execute(query)
+        connection.commit()
+        print("inserted")
+        flash(f"Added New Document copy, Copy no: {copy_no}", "success")
+    except Exception as e:
+        print(tb.format_exc)
+        connection.rollback()
+        flash(f"Unexpected error while trying to add copy: {e}", "danger")
+    return render_template('adminHome.html')

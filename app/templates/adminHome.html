@@ -4,7 +4,7 @@
 <br>
 
 <div style="margin-left: 40px;">
-    <form method="POST" action="{{url_for('admin.api_1')}}"
+    <form method="POST" action="{{url_for('admin.document')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
         <label style="font-size: 20px; color: white;" for="title">Add a document. </label>
         <div class="form-group" style="display: flex;">
@@ -62,7 +62,7 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="POST" action="{{url_for('admin.api_2')}}"
+    <form method="POST" action="{{url_for('admin.document_copy')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
         <label style="font-size: 20px; color: white;" for="copynum">Add document copy. </label>
         <div class="form-group" style="display: flex;">
@@ -77,7 +77,7 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.search')}}"
+    <form method="GET" action="{{url_for('admin.document')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
         <label style="font-size: 20px; color: white;" for="docid">Search document copy and check its status. </label>
         <div class="form-group" style="display: flex;">
