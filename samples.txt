@@ -19,3 +19,8 @@
             <a href="?" class="btn btn-secondary">Reset</a>
         </div>
     </form>
+
+<button onclick="myCreateFunction()">Add Copy</button>
+    <button onclick="myDeleteFunction()">Delete Copy</button>
+    <button onclick="myCreateFunction1()">Add Chair</button>
+    <button onclick="myDeleteFunction1()">Delete Chair</button>

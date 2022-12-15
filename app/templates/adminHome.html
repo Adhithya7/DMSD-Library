@@ -33,8 +33,8 @@
 
             <table id="myTable">
                 <tr>
-                    <td><input type="text" name="issuenum" id="issuenum" placeholder="Issue Num"></td>
-                    <td><input type="text" name="geditor" id="geditor" placeholder="Guest Editor"></td>
+                    <td><input type="number" name="issuenum" id="issuenum" placeholder="Enter Number of Issues"></td>
+                    <td><input type="textarea" name="geditors" id="geditors" placeholder="Enter Guest Editor name(s)"></td>
                 </tr>
             </table>
             <br>
@@ -48,24 +48,21 @@
 
             <table id="myTable1">
                 <tr>
-                    <td><input type="text" name="chair" id="chair" placeholder="Enter Chair"></td>
+                    <td><input type="number" name="numchair" id="numchair" placeholder="Enter Number of Chairs" /></td>
+                    <td><input type="textarea" name="chairs" id="chairs" placeholder="Enter Chair(s)" /></td>
                 </tr>
             </table>
             <br>
 
         </div>
         <div style="margin-left: auto; margin-right: auto;">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary" >Submit</button>
         </div>
     </form>
-    <button onclick="myCreateFunction()">Add Copy</button>
-    <button onclick="myDeleteFunction()">Delete Copy</button>
-    <button onclick="myCreateFunction1()">Add Chair</button>
-    <button onclick="myDeleteFunction1()">Delete Chair</button>
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="GET" action="{{url_for('admin.api_2')}}"
+    <form method="POST" action="{{url_for('admin.api_2')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
         <label style="font-size: 20px; color: white;" for="copynum">Add document copy. </label>
         <div class="form-group" style="display: flex;">
@@ -195,7 +192,8 @@
         <label style="font-size: 20px; color: white;" for="yr">Get the 10 most popular books of a year in the
             library.</label>
         <div class="form-group" style="display: flex;">
-            <input style="margin-left: 5px;" type="number" name="year_value" class="yr-input" id="yr" placeholder="Enter year">
+            <input style="margin-left: 5px;" type="number" name="year_value" class="yr-input" id="yr"
+                placeholder="Enter year">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -209,9 +207,11 @@
         <label style="font-size: 20px; color: white;" for="st">Get average fine paid by the borrowers by branch
             in a time period.</label>
         <div class="form-group" style="display: flex;">
-            <input style="margin-left: 5px;" type="date" name="st_value" class="st-input" id="st" placeholder="Start Date">
+            <input style="margin-left: 5px;" type="date" name="st_value" class="st-input" id="st"
+                placeholder="Start Date">
             <br>
-            <input style="margin-left: 5px;" type="date" name="end_value" class="end-input" id="end" placeholder="End Date">
+            <input style="margin-left: 5px;" type="date" name="end_value" class="end-input" id="end"
+                placeholder="End Date">
         </div>
         <div>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -238,7 +238,8 @@
         var table = document.getElementById("myTable1");
         var row = table.insertRow(0);
         var cell1 = row.insertCell(0);
-        cell1.innerHTML = '<td><input type="text" name="chair" id="chair" placeholder="Enter Chair"></td>';}
+        cell1.innerHTML = '<td><input type="text" name="chair" id="chair" placeholder="Enter Chair" value="" /></td>';
+    }
 
     function myDeleteFunction1() {
         document.getElementById("myTable1").deleteRow(0);

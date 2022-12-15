@@ -12,7 +12,7 @@ admin = Blueprint('admin', __name__, url_prefix='/admin',
 
 @admin.route("/home_page", methods=["GET"])
 def home_page():
-    return render_template('adminResults.html')
+    return render_template('adminHome.html')
 
 @admin.route("/most_borrowed", methods=["GET"]) # most borrowed books
 def most_borrowed():
@@ -69,7 +69,7 @@ def api_3():
     print(bid_value)
     return render_template('adminResults.html')
 
-@admin.route("/api_2", methods=["GET"]) # Search document copy and check its status.  
+@admin.route("/api_2", methods=["POST"]) # Search document copy and check its status.  
 def api_2():
     bid_value = request.args.get('bid_value')
     print(bid_value)
