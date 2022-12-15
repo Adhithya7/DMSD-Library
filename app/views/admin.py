@@ -8,17 +8,6 @@ from utils import connection, cursor
 admin = Blueprint('admin', __name__, url_prefix='/admin',
                    template_folder='templates')
 
-<<<<<<< HEAD
-# @admin.route("/import", methods=["GET","POST"])
-# def document():
-#     pass
-
-@admin.route("/home_page", methods=["GET"])
-def home_page():
-    return render_template('adminHome.html')
-
-=======
->>>>>>> b7a4cd6ce154cecb04ac72a8362ff8e037874bec
 @admin.route("/most_borrowed", methods=["GET"]) # most borrowed books
 @login_required
 def most_borrowed():
@@ -219,13 +208,6 @@ def reader():
         flash(f"Unexpected error while trying to add reader: {e}", "danger")
     return render_template('adminHome.html')
 
-<<<<<<< HEAD
-@admin.route("/api_2", methods=["POST"]) # Search document copy and check its status.  
-def api_2():
-    bid_value = request.args.get('bid_value')
-    print(bid_value)
-    return render_template('adminResults.html')
-=======
 @admin.route("/search", methods=["GET"]) # Search document copy and check its status.  
 @login_required
 def search():
@@ -252,7 +234,6 @@ def search():
     rows.insert(0, columns)
     print(rows)
     return render_template('adminResults.html', rows=rows)
->>>>>>> b7a4cd6ce154cecb04ac72a8362ff8e037874bec
 
 @admin.route("/api_1", methods=["GET"]) # Add a document copy.   
 @login_required
