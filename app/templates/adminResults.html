@@ -17,14 +17,22 @@
                     {% endfor %}
                 </tr>
             </thead>
-            {% endif %}
             {% for r in rows[1:] %}
+            <tbody>
             <tr>
                 {% for i in r %}
                 <td>{{i}}</td>
                 {% endfor %}
             </tr>
             {% endfor %}
+            </tbody>
+            {% else %}
+            <tbody>
+                <tr>
+                    <td colspan="100%">No results to show</td>
+                </tr>
+            </tbody>
+            {% endif %}
         </table>
     </div>
 </div>
