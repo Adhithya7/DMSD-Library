@@ -255,7 +255,7 @@ def document():
 
     if request.method == "POST":
         form_data = {}
-        fields = ["title", "pdate", "pubid", "bid", "position"]
+        fields = ["title", "pdate", "publisherid", "bid", "position"]
         for field in fields:
             if not request.form.get(field):
                 flash(f"{field} is a mandatory field", "danger")
@@ -264,12 +264,15 @@ def document():
         fields.remove('bid')
         fields.remove('position')
         query= f"""INSERT INTO DOCUMENT({','.join(fields)}) VALUES
-                        ('{form_data['title']}', '{form_data['pdate']}', 
-                         '{form_data['pubid']}') RETURNING docid;"""     
+                        ('{form_data['title']}', to_date('{form_data['pdate']}','YYYY-MM-DD'), 
+                         '{form_data['publisherid']}') RETURNING docid;"""     
         try:
             cursor.execute(query)
-            connection.commit()
             docid = cursor.fetchall()[0][0]
+            query= f"""INSERT INTO COPY(docid, bid, position, copyno) VALUES
+                        ('{docid}', '{form_data['bid']}', 
+                         '{form_data['position']}', 1);""" 
+            cursor.execute(query)
         except Exception as e:
             print(tb.format_exc)
             connection.rollback()
@@ -302,19 +305,19 @@ def document():
                         flash(f"{field} is a mandatory field", "danger")
                         return render_template('adminHome.html')
                     form_data[field] = request.form.get(field)
-                query1 = f"""Insert into JOURNAL_VOLUME(VOLUME_NO, EDITOR) VALUES
-                            ('{form_data['volnum']}', '{form_data['meditor']}')"""
+                query1 = f"""Insert into JOURNAL_VOLUME(DOCID, VOLUME_NO, EDITOR) VALUES
+                            ('{docid}', '{form_data['volnum']}', '{form_data['meditor']}')"""
                 cursor.execute(query1)
                 geditors = form_data["geditors"].split('$')
                 for i in range(1, (int(form_data['issuenum']) + 1)):
-                    query2 = f"""Insert into journal_issues(docid, issue_no, scope) VALUES
+                    query2 = f"""Insert into journal_issue(docid, issue_no, scope) VALUES
                             ('{docid}', '{i}', '{form_data['scope']}')"""
                     cursor.execute(query2)
                     sub_geditors = geditors[i-1].split(',')
                     for sub_geditor in sub_geditors:
                         query3 = f"""Insert into gedits(docid, issue_no, pid) VALUES
                                 ('{docid}', '{i}', '{sub_geditor}')"""
-                        cursor.execute(query2)
+                        cursor.execute(query3)
                 connection.commit()
 
             elif doctype == "proceeding":
@@ -326,7 +329,7 @@ def document():
                         return render_template('adminHome.html')
                     form_data[field] = request.form.get(field)
                 query1 = f"""Insert into PROCEEDINGS(docid, cdate, clocation, ceditor) VALUES
-                            ('{docid}', '{form_data['cdate']}', '{form_data['clocation']}'
+                            ('{docid}', '{form_data['cdate']}', '{form_data['clocation']}',
                              '{form_data['ceditor']}')"""
                 cursor.execute(query1)
                 chairs = form_data["chairs"].split(',')
@@ -343,9 +346,9 @@ def document():
                 cursor.execute(query)
                 connection.commit()
             except Exception as e:
-                print(tb.format_exc)
+                print(tb.format_exc())
                 connection.rollback()
-            flash(f"Unexpected error while trying to rollback: {e}", "danger")
+                flash(f"Unexpected error while trying to rollback: {e}", "danger")
             return render_template('adminHome.html')
 
         return render_template('adminHome.html')
@@ -369,7 +372,7 @@ def add_copy():
         flash(f"Unexpected error while fetching copy_no: {e}")
         return render_template('adminHome.html')
     copy_no = cursor.fetchall()
-    copy_no = int(copy_no[0][0]) + 1 if copy_no else 1
+    copy_no = int(copy_no[0][0]) + 1 if copy_no[0][0] else 1
     fields.append('copyno')
     query= f"""INSERT INTO COPY({','.join(fields)}) VALUES
                         ('{form_data['docid']}', '{form_data['bid']}', 

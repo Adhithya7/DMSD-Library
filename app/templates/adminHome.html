@@ -10,9 +10,7 @@
         <div class="form-group" style="display: flex;">
             <input style="margin-left: 5px;" type="text" name="title" id="title" placeholder="Enter Title">
             <input style="margin-left: 5px;" type="date" name="pdate" id="pdate" placeholder="Published On">
-            <input style="margin-left: 5px;" type="text" name="pubname" id="pubname" placeholder="Publisher Name">
-            <input style="margin-left: 5px;" type="text" name="address" id="address" placeholder="Publisher Address">
-            <input style="margin-left: 5px;" type="text" name="copyno" id="copyno" placeholder="Copy No">
+            <input style="margin-left: 5px;" type="text" name="publisherid" id="publisherid" placeholder="Publisher ID">
             <input style="margin-left: 5px;" type="text" name="bid" id="bid" placeholder="Branch ID">
             <input style="margin-left: 5px;" type="text" name="position" id="position" placeholder="Position">
         </div>
@@ -32,6 +30,7 @@
             <label style="font-size: 20px; color: white;" for="bid">Journal:</label>
             <input style="margin-left: 5px;" type="number" name="volnum" id="volnum" placeholder="Volume Num">
             <input style="margin-left: 5px;" type="text" name="meditor" id="meditor" placeholder="Main Editor">
+            <input style="margin-left: 5px;" type="text" name="scope" id="scope" placeholder="Scope">
 
             <table id="myTable">
                 <tr>
@@ -64,7 +63,7 @@
 </div>
 <br>
 <div style="margin-left: 40px;">
-    <form method="POST" action="{{url_for('admin.document_copy')}}"
+    <form method="POST" action="{{url_for('admin.add_copy')}}"
         style="background-color: rgba(0, 0, 0, 0.671); border-radius: 10px; margin-right: 200px; padding: 10px;">
         <label style="font-size: 20px; color: white;" for="copynum">Add document copy. </label>
         <div class="form-group" style="display: flex;">
