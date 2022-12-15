@@ -9,4 +9,4 @@ class createDoc(BaseModel):
     ISBN: int
 
 class createCopy(BaseModel):
-    
+    id: int
