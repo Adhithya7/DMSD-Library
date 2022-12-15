@@ -1,11 +1,11 @@
-BID,LNAME,LOCATION
-1,Newark Public library - Main Branch,Washington St
-2,Newark Public library - Springfield Branch,Springfield st
-3,Newark Public library - Van Buren Branch,Van Buren St
-4,US court - Appeals Library,walnut St
-5,Robert W. Van Houten Library,NJIT
-6,Harrison Public Library,Harrison
-7,Essex County College Library,Essex
-8,Dana Library,University Ave
-9,Rutgers Law library,Rutgers
-10,Littman Architecture Library,Weston Hall
+LNAME,LOCATION
+Newark Public library - Main Branch,Washington St
+Newark Public library - Springfield Branch,Springfield st
+Newark Public library - Van Buren Branch,Van Buren St
+US court - Appeals Library,walnut St
+Robert W. Van Houten Library,NJIT
+Harrison Public Library,Harrison
+Essex County College Library,Essex
+Dana Library,University Ave
+Rutgers Law library,Rutgers
+Littman Architecture Library,Weston Hall

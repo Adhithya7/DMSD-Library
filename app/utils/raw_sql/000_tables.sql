@@ -114,7 +114,7 @@ CREATE TABLE
 CREATE TABLE
     COPY(
         DOCID int,
-        COPYNO serial,
+        COPYNO int,
         BID int,
         POSITION VARCHAR(30),
         FOREIGN KEY (DOCID) REFERENCES DOCUMENT(DOCID),

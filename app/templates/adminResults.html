@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "adminLayout.html" %}
 {%block content%}
 <h2 class="page_title">Results</h2>
 
@@ -21,11 +21,8 @@
             {% for r in rows[1:] %}
             <tr>
                 {% for i in r %}
-                {% if type(i) == datetime.datetime |length > 0 %}
-                <td>{{i.strftime('%Y-%m-%d')}}</td>
-                {% elif %}
                 <td>{{i}}</td>
-                {% endif %}
+                {% endfor %}
             </tr>
             {% endfor %}
         </table>

@@ -36,8 +36,8 @@ for order, q in enumerate(queries):
     try:
         if "CSV" in sql:
             elem = sql.split(" ")
-            with open(elem[3].replace("'","")) as f:
-                cursor.copy_expert(f'COPY {elem[1]} FROM STDIN WITH HEADER CSV', f)
+            with open(elem[4].replace("'","")) as f:
+                cursor.copy_expert(f'COPY {elem[1]} {elem[2]} FROM STDIN WITH HEADER CSV', f)
         else:
             cursor.execute(sql)
         print("Ran successfully") 
