@@ -146,7 +146,7 @@ def document(id):
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         if request.args.get("fines") and request.args.get("rid"):
-            fine_query = f"""SELECT GREATEST(0, (date_part('day', BS.rdtime) - date_part('day', BS.bdtime) - 20))*0.20 as fine from BORROWS BR
+            fine_query = f"""SELECT GREATEST(15, (date_part('day', BS.rdtime) - date_part('day', BS.bdtime) - 20))*0.20 as fine from BORROWS BR
                 JOIN BORROWING BS on BR.rid = {request.args.get("rid")} and BR.bor_no = BS.bor_no
                 and BS.rdtime is null and BR.docid={id}"""
             cursor.execute(fine_query)
